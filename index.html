@@ -225,8 +225,12 @@ const SCENES = [
   { q:'petra+jordan+ancient+ruins',   name:'Petra',               place:'Jordan' },
 ];
 
+// source.unsplash.com is discontinued — use loremflickr (keyword-based, free, no key)
 function unsplashUrl(query, w=1600, h=900) {
-  return `https://source.unsplash.com/featured/${w}x${h}/?${query}`;
+  const kw = query.replace(/\+/g, ',');
+  // deterministic seed so same location always returns same photo
+  const seed = query.split('').reduce((a,c)=>a+c.charCodeAt(0),0) % 9999;
+  return `https://loremflickr.com/${w}/${h}/${kw}?lock=${seed}`;
 }
 
 // ══════════════════════════════════════════════
@@ -366,7 +370,7 @@ function buildBreakCard(item, useImg) {
     const img=document.createElement('img');
     img.className='bgimg'; img.loading='lazy'; img.alt=scene.name;
     img.src=unsplashUrl(scene.q,900,500);
-    img.onerror=()=>{el.classList.remove('imgbg');el.classList.add('plain');img.remove();dim.remove();badge.remove();};
+    img.onerror=()=>{img.style.display='none';el.style.background='linear-gradient(135deg,rgba(0,0,0,.55),rgba(20,20,40,.7))';};
     const dim=document.createElement('div'); dim.className='bgdim';
     const badge=document.createElement('div'); badge.className='loc-badge';
     badge.innerHTML=`📍 ${scene.name} · ${scene.place}`;
@@ -420,7 +424,8 @@ function buildPanel(scene) {
   const img=document.createElement('img');
   img.loading='lazy'; img.alt=scene.name;
   img.src=unsplashUrl(scene.q,1600,900);
-  img.onerror=()=>panel.style.display='none';
+  // on error: show a dark gradient placeholder instead of collapsing (collapsing causes scroll loop)
+  img.onerror=()=>{img.style.display='none';panel.style.background='linear-gradient(135deg,#0d1117,#1a1f2e)';};
   const dim=document.createElement('div'); dim.className='panel-dim';
   const info=document.createElement('div'); info.className='panel-info';
   info.innerHTML=`<div class="panel-name">${scene.name}</div><div class="panel-place"><span class="panel-pin">📍</span>${scene.place}</div>`;
@@ -429,19 +434,25 @@ function buildPanel(scene) {
   return panel;
 }
 
+const MAX_PANELS = 60; // prevent runaway loading
+let totalPanels = 0;
+let sentinelObs = null;
+
 function addGalleryBatch(n=3) {
+  if(totalPanels >= MAX_PANELS){ if(sentinelObs)sentinelObs.disconnect(); document.getElementById('gallery-sentinel').style.display='none'; return; }
   const grid=document.getElementById('gallery-grid');
-  for(let i=0;i<n;i++){
+  const add=Math.min(n, MAX_PANELS-totalPanels);
+  for(let i=0;i<add;i++){
     const scene=shuffledScenes[sceneIdx%shuffledScenes.length]; sceneIdx++;
     if(sceneIdx%shuffledScenes.length===0)shuffledScenes.sort(()=>Math.random()-.5);
-    grid.appendChild(buildPanel(scene));
+    grid.appendChild(buildPanel(scene)); totalPanels++;
   }
 }
 
 function initGallery() {
   addGalleryBatch(3);
-  new IntersectionObserver(es=>{if(es[0].isIntersecting)addGalleryBatch(3);},{rootMargin:'300px'})
-    .observe(document.getElementById('gallery-sentinel'));
+  sentinelObs=new IntersectionObserver(es=>{if(es[0].isIntersecting)addGalleryBatch(3);},{rootMargin:'200px'});
+  sentinelObs.observe(document.getElementById('gallery-sentinel'));
 }
 
 // ══════════════════════════════════════════════
