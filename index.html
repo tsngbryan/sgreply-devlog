@@ -64,12 +64,9 @@
     .mission-card::before { content:''; position:absolute; top:0;left:0;right:0; height:2px; background:linear-gradient(90deg,var(--accent),var(--accent2)); }
     .mission-label { font-size:.68rem; font-weight:600; letter-spacing:.15em; text-transform:uppercase; color:var(--accent); margin-bottom:.65rem; }
     .mission-text { font-size:1.08rem; line-height:1.78; color:var(--text); font-weight:300; margin-bottom:1.8rem; }
-    .milestones { display:flex; flex-direction:column; gap:.75rem; }
-    .milestone-row { display:flex; align-items:center; gap:1rem; }
-    .milestone-name { font-size:.78rem; font-weight:500; color:var(--muted); white-space:nowrap; min-width:190px; }
-    .bar-track { flex:1; height:5px; background:rgba(255,255,255,.1); border-radius:999px; overflow:hidden; }
-    .bar-fill { height:100%; border-radius:999px; background:linear-gradient(90deg,var(--accent),var(--accent2)); width:0; transition:width 1.3s cubic-bezier(.4,0,.2,1); }
-    .milestone-pct { font-size:.73rem; font-weight:600; color:var(--accent); min-width:2.4rem; text-align:right; }
+    .next-up { display:flex; flex-direction:column; gap:.55rem; }
+    .next-up-item { display:flex; align-items:flex-start; gap:.7rem; font-size:.83rem; line-height:1.5; color:var(--muted); }
+    .next-up-num { flex-shrink:0; width:1.4rem; height:1.4rem; border-radius:50%; background:rgba(181,170,255,.15); border:1px solid rgba(181,170,255,.3); display:flex; align-items:center; justify-content:center; font-size:.65rem; font-weight:700; color:var(--accent); margin-top:.05em; }
 
     /* ── SESSION CARDS ── */
     .section-title { font-size:.68rem; font-weight:600; letter-spacing:.15em; text-transform:uppercase; color:var(--muted); margin-bottom:1.4rem; display:flex; align-items:center; gap:.75rem; }
@@ -187,10 +184,10 @@ const CONFIG = {
   githubBranch: 'main',
   logPath:      'session-log.md',
   mission: 'Building SGReply — AI-powered WhatsApp auto-reply for Singapore SMEs. Help thousands of businesses respond to customers 24/7 without extra staff. One bot, any industry, set up in minutes.',
-  milestones: [
-    { name: 'M1 · Foundation',             pct: 80 },
-    { name: 'M2 · Multi-tenant + Handoff', pct: 8  },
-    { name: 'M3 · Payments + Analytics',   pct: 0  },
+  nextUp: [
+    'Fix sgreply.com sitemap — Lovable CDN returns HTML instead of XML',
+    'Submit sitemaps to Google Search Console + Bing Webmaster Tools',
+    'WhatsApp settings hub — frontend page for clients to manage their number',
   ],
 };
 
@@ -321,16 +318,16 @@ function setQuote() {
 function buildMission() {
   document.getElementById('mission-text').textContent=CONFIG.mission;
   const c=document.getElementById('milestones');
-  CONFIG.milestones.forEach(m=>{
-    const row=document.createElement('div');row.className='milestone-row';
-    row.innerHTML=`<span class="milestone-name">${m.name}</span><div class="bar-track"><div class="bar-fill" data-pct="${m.pct}"></div></div><span class="milestone-pct">${m.pct}%</span>`;
+  c.insertAdjacentHTML('beforebegin','<div class="mission-label" style="margin-top:1.4rem;margin-bottom:.5rem">→ Next up</div>');
+  c.className='next-up';
+  CONFIG.nextUp.forEach((item,i)=>{
+    const row=document.createElement('div');row.className='next-up-item';
+    row.innerHTML=`<span class="next-up-num">${i+1}</span><span>${item}</span>`;
     c.appendChild(row);
   });
 }
 
-function animateBars() {
-  document.querySelectorAll('.bar-fill').forEach(b=>setTimeout(()=>b.style.width=b.dataset.pct+'%',200));
-}
+function animateBars() { /* no-op — bars replaced with next-up list */ }
 
 // ══════════════════════════════════════════════
 //  PARSE SESSION LOG
