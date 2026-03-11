@@ -223,9 +223,18 @@ const SCENES = [
 ];
 
 // source.unsplash.com is discontinued — use loremflickr (keyword-based, free, no key)
-function unsplashUrl(query, w=1600, h=900) {
+// Sizes snap to common breakpoints so loremflickr can cache effectively
+function snapSize(px) {
+  const steps = [320,480,640,800,960,1080,1280,1440,1600,1920,2560];
+  return steps.find(s => s >= px) || steps[steps.length-1];
+}
+function screenW() { return snapSize(window.screen.width * (window.devicePixelRatio||1)); }
+function screenH() { return snapSize(window.screen.height * (window.devicePixelRatio||1)); }
+function viewW()   { return snapSize(window.innerWidth); }
+function viewH(multiplier=1) { return snapSize(Math.round(window.innerHeight * multiplier)); }
+
+function unsplashUrl(query, w, h) {
   const kw = query.replace(/\+/g, ',');
-  // deterministic seed so same location always returns same photo
   const seed = query.split('').reduce((a,c)=>a+c.charCodeAt(0),0) % 9999;
   return `https://loremflickr.com/${w}/${h}/${kw}?lock=${seed}`;
 }
@@ -296,7 +305,7 @@ let sceneIdx = 0;
 function setPageBackground() {
   const scene = shuffledScenes[0];
   const img = document.getElementById('page-bg-img');
-  img.src = unsplashUrl(scene.q, 1920, 1080);
+  img.src = unsplashUrl(scene.q, screenW(), screenH());
   img.onerror = () => {
     document.getElementById('page-bg').style.background = 'linear-gradient(135deg,#0a0a1f 0%,#1a0a2e 100%)';
     img.style.display = 'none';
@@ -366,7 +375,7 @@ function buildBreakCard(item, useImg) {
     const scene=bgScenes[bgIdx%bgScenes.length]; bgIdx++;
     const img=document.createElement('img');
     img.className='bgimg'; img.loading='lazy'; img.alt=scene.name;
-    img.src=unsplashUrl(scene.q,900,500);
+    img.src=unsplashUrl(scene.q, viewW(), 500);
     img.onerror=()=>{img.style.display='none';el.style.background='linear-gradient(135deg,rgba(0,0,0,.55),rgba(20,20,40,.7))';};
     const dim=document.createElement('div'); dim.className='bgdim';
     const badge=document.createElement('div'); badge.className='loc-badge';
@@ -420,7 +429,7 @@ function buildPanel(scene) {
   const panel=document.createElement('div'); panel.className='gallery-panel';
   const img=document.createElement('img');
   img.loading='lazy'; img.alt=scene.name;
-  img.src=unsplashUrl(scene.q,1600,900);
+  img.src=unsplashUrl(scene.q, viewW(), viewH(0.88));
   // on error: show a dark gradient placeholder instead of collapsing (collapsing causes scroll loop)
   img.onerror=()=>{img.style.display='none';panel.style.background='linear-gradient(135deg,#0d1117,#1a1f2e)';};
   const dim=document.createElement('div'); dim.className='panel-dim';
