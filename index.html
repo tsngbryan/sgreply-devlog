@@ -10,409 +10,292 @@
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     :root {
-      --accent: #7c6fff;
-      --accent2: #ff6fb8;
-      --glass: rgba(255,255,255,0.07);
-      --glass-border: rgba(255,255,255,0.13);
-      --text: #f0eeff;
-      --muted: rgba(240,238,255,0.55);
-      --done-color: #5fffa0;
-      --pending-color: #ffb347;
-      --bg-from: #0d0d1a;
-      --bg-to: #1a0d2e;
+      --accent: #7c6fff; --accent2: #ff6fb8;
+      --glass: rgba(255,255,255,0.07); --glass-border: rgba(255,255,255,0.13);
+      --text: #f0eeff; --muted: rgba(240,238,255,0.55);
+      --done-color: #5fffa0; --pending-color: #ffb347;
+      --bg-from: #0d0d1a; --bg-mid: #1a0d2e; --bg-to: #1a0d2e;
     }
-
     html { scroll-behavior: smooth; }
+    body { font-family: 'Inter', system-ui, sans-serif; color: var(--text); min-height: 100vh; overflow-x: hidden; background: var(--bg-from); }
 
-    body {
-      font-family: 'Inter', system-ui, sans-serif;
-      color: var(--text);
-      min-height: 100vh;
-      overflow-x: hidden;
-      background: var(--bg-from);
-    }
-
-    /* ── ANIMATED BACKGROUND ── */
+    /* ── BACKGROUND ── */
     #bg {
       position: fixed; inset: 0; z-index: 0;
-      background: linear-gradient(135deg, var(--bg-from) 0%, var(--bg-mid, #1a0d2e) 50%, var(--bg-to) 100%);
-      animation: bgShift 12s ease-in-out infinite alternate;
+      background: linear-gradient(135deg, var(--bg-from) 0%, var(--bg-mid) 50%, var(--bg-to) 100%);
+      animation: bgShift var(--bg-dur, 14s) ease-in-out infinite alternate;
     }
     @keyframes bgShift {
-      0%   { filter: hue-rotate(0deg) brightness(1); }
-      100% { filter: hue-rotate(20deg) brightness(1.1); }
+      0%   { filter: hue-rotate(0deg) brightness(1) saturate(1); }
+      100% { filter: hue-rotate(var(--bg-hue, 25deg)) brightness(1.12) saturate(1.1); }
     }
 
-    /* Stars */
-    .star {
-      position: fixed; border-radius: 50%;
-      background: white; z-index: 1;
-      animation: twinkle var(--dur, 3s) ease-in-out infinite alternate;
-      opacity: 0;
+    /* ── PARTICLES: stars ── */
+    .p-star { position: fixed; border-radius: 50%; background: white; z-index: 1;
+      animation: twinkle var(--dur,3s) ease-in-out infinite alternate var(--delay,0s); opacity: 0; }
+    @keyframes twinkle { 0% { opacity:0; transform:scale(.8); } 100% { opacity:var(--op,.6); transform:scale(1.3); } }
+
+    /* ── PARTICLES: rising embers ── */
+    .p-ember { position: fixed; border-radius: 50%; z-index: 1;
+      animation: rise var(--dur,6s) ease-in infinite var(--delay,0s); opacity: 0; }
+    @keyframes rise {
+      0%   { opacity:0; transform: translateY(0) scale(1); }
+      20%  { opacity: var(--op,.7); }
+      80%  { opacity: var(--op,.4); }
+      100% { opacity:0; transform: translateY(-100vh) scale(.3) translateX(var(--drift,20px)); }
     }
-    @keyframes twinkle {
-      0%   { opacity: 0; transform: scale(0.8); }
-      100% { opacity: var(--max-op, 0.7); transform: scale(1.2); }
+
+    /* ── PARTICLES: falling petals ── */
+    .p-petal { position: fixed; border-radius: 60% 40% 50% 50%; z-index: 1;
+      animation: fall var(--dur,8s) ease-in infinite var(--delay,0s); opacity:0; }
+    @keyframes fall {
+      0%   { opacity:0; transform: translateY(-40px) rotate(0deg); }
+      10%  { opacity: var(--op,.6); }
+      90%  { opacity: var(--op,.3); }
+      100% { opacity:0; transform: translateY(110vh) rotate(360deg) translateX(var(--drift,30px)); }
+    }
+
+    /* ── PARTICLES: rain ── */
+    .p-rain { position: fixed; width: 1px; border-radius: 1px; z-index: 1;
+      background: linear-gradient(to bottom, transparent, var(--rain-color, rgba(0,200,255,.4)));
+      animation: rainFall var(--dur,1.2s) linear infinite var(--delay,0s); opacity:0; }
+    @keyframes rainFall {
+      0%   { opacity:0; transform: translateY(-20px); }
+      10%  { opacity:1; }
+      90%  { opacity:.6; }
+      100% { opacity:0; transform: translateY(110vh); }
+    }
+
+    /* ── PARTICLES: drifting orbs ── */
+    .p-orb { position: fixed; border-radius: 50%; z-index: 1; filter: blur(40px);
+      animation: orbDrift var(--dur,20s) ease-in-out infinite alternate var(--delay,0s); }
+    @keyframes orbDrift {
+      0%   { transform: translate(0,0) scale(1); opacity: var(--op,.12); }
+      50%  { transform: translate(var(--dx,40px), var(--dy,-30px)) scale(1.2); opacity: calc(var(--op,.12) * 1.5); }
+      100% { transform: translate(var(--dx2,-20px), var(--dy2,50px)) scale(.8); opacity: var(--op,.12); }
     }
 
     /* ── HERO ── */
-    #hero {
-      position: relative; z-index: 10;
-      min-height: 100vh;
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      text-align: center; padding: 2rem;
-      cursor: pointer;
-    }
+    #hero { position:relative; z-index:10; min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:2rem; cursor:pointer; }
+    #quote-block { max-width:680px; animation: floatY 7s ease-in-out infinite alternate; }
+    @keyframes floatY { 0% { transform:translateY(0); } 100% { transform:translateY(-16px); } }
+    .quote-mark { font-family:'Playfair Display',serif; font-size:clamp(5rem,12vw,9rem); line-height:.5; color:var(--accent); opacity:.3; display:block; margin-bottom:-1.5rem; }
+    #quote-text { font-family:'Playfair Display',serif; font-size:clamp(1.25rem,3.2vw,2rem); line-height:1.6; font-style:italic; color:var(--text); text-shadow:0 2px 40px rgba(0,0,0,.6); margin-bottom:1.3rem; }
+    #quote-author { font-size:.9rem; font-weight:600; letter-spacing:.14em; text-transform:uppercase; color:var(--accent); opacity:.85; }
+    .hero-hint { position:absolute; bottom:2.5rem; display:flex; flex-direction:column; align-items:center; gap:.4rem; font-size:.78rem; color:var(--muted); letter-spacing:.1em; animation:bounce 2.2s ease-in-out infinite; }
+    @keyframes bounce { 0%,100%{transform:translateY(0);} 50%{transform:translateY(7px);} }
+    .tag { display:inline-block; background:var(--glass); border:1px solid var(--glass-border); backdrop-filter:blur(10px); border-radius:999px; padding:.35rem 1.1rem; font-size:.72rem; letter-spacing:.1em; text-transform:uppercase; color:var(--accent); margin-bottom:1.8rem; font-weight:600; }
 
-    #quote-block {
-      max-width: 700px;
-      animation: floatY 6s ease-in-out infinite alternate;
-    }
-    @keyframes floatY {
-      0%   { transform: translateY(0px); }
-      100% { transform: translateY(-14px); }
-    }
+    /* ── CONTENT ── */
+    #content { position:relative; z-index:10; max-width:860px; margin:0 auto; padding:0 1.5rem 6rem; }
 
-    .quote-mark {
-      font-family: 'Playfair Display', serif;
-      font-size: clamp(5rem, 12vw, 9rem);
-      line-height: 0.5;
-      color: var(--accent);
-      opacity: 0.35;
-      display: block;
-      margin-bottom: -1.5rem;
-    }
-
-    #quote-text {
-      font-family: 'Playfair Display', serif;
-      font-size: clamp(1.3rem, 3.5vw, 2.1rem);
-      line-height: 1.55;
-      font-style: italic;
-      color: var(--text);
-      text-shadow: 0 2px 40px rgba(0,0,0,0.6);
-      margin-bottom: 1.4rem;
-    }
-
-    #quote-author {
-      font-size: 0.95rem;
-      font-weight: 500;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--accent);
-      opacity: 0.85;
-    }
-
-    .hero-hint {
-      position: absolute; bottom: 2.5rem;
-      display: flex; flex-direction: column; align-items: center; gap: 0.4rem;
-      font-size: 0.8rem; color: var(--muted); letter-spacing: 0.1em;
-      animation: bounce 2s ease-in-out infinite;
-    }
-    @keyframes bounce {
-      0%, 100% { transform: translateY(0); }
-      50%       { transform: translateY(6px); }
-    }
-    .hero-hint svg { opacity: 0.5; }
-
-    .tag {
-      display: inline-block;
-      background: var(--glass);
-      border: 1px solid var(--glass-border);
-      backdrop-filter: blur(8px);
-      border-radius: 999px;
-      padding: 0.35rem 1rem;
-      font-size: 0.75rem;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--accent);
-      margin-bottom: 1.8rem;
-      font-weight: 600;
-    }
-
-    /* ── CONTENT SECTION ── */
-    #content {
-      position: relative; z-index: 10;
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 0 1.5rem 6rem;
-    }
-
-    /* ── MISSION CARD ── */
-    .mission-card {
-      background: var(--glass);
-      border: 1px solid var(--glass-border);
-      backdrop-filter: blur(20px);
-      border-radius: 20px;
-      padding: 2.2rem 2.5rem;
-      margin-bottom: 3rem;
-      position: relative;
-      overflow: hidden;
-    }
-    .mission-card::before {
-      content: '';
-      position: absolute; top: 0; left: 0; right: 0; height: 2px;
-      background: linear-gradient(90deg, var(--accent), var(--accent2));
-    }
-    .mission-label {
-      font-size: 0.7rem; font-weight: 600;
-      letter-spacing: 0.15em; text-transform: uppercase;
-      color: var(--accent); margin-bottom: 0.7rem;
-    }
-    .mission-text {
-      font-size: 1.15rem; line-height: 1.7;
-      color: var(--text); font-weight: 300;
-      margin-bottom: 1.8rem;
-    }
-
-    /* Progress bars */
-    .milestones { display: flex; flex-direction: column; gap: 0.75rem; }
-    .milestone-row { display: flex; align-items: center; gap: 1rem; }
-    .milestone-name {
-      font-size: 0.8rem; font-weight: 500;
-      color: var(--muted); white-space: nowrap;
-      min-width: 180px;
-    }
-    .bar-track {
-      flex: 1; height: 6px;
-      background: rgba(255,255,255,0.1);
-      border-radius: 999px; overflow: hidden;
-    }
-    .bar-fill {
-      height: 100%; border-radius: 999px;
-      background: linear-gradient(90deg, var(--accent), var(--accent2));
-      transition: width 1.2s cubic-bezier(.4,0,.2,1);
-      width: 0;
-    }
-    .milestone-pct {
-      font-size: 0.75rem; font-weight: 600;
-      color: var(--accent); min-width: 2.5rem; text-align: right;
-    }
+    /* ── MISSION ── */
+    .mission-card { background:var(--glass); border:1px solid var(--glass-border); backdrop-filter:blur(20px); border-radius:20px; padding:2.2rem 2.5rem; margin-bottom:3rem; position:relative; overflow:hidden; }
+    .mission-card::before { content:''; position:absolute; top:0;left:0;right:0; height:2px; background:linear-gradient(90deg,var(--accent),var(--accent2)); }
+    .mission-label { font-size:.68rem; font-weight:600; letter-spacing:.15em; text-transform:uppercase; color:var(--accent); margin-bottom:.65rem; }
+    .mission-text { font-size:1.1rem; line-height:1.75; color:var(--text); font-weight:300; margin-bottom:1.8rem; }
+    .milestones { display:flex; flex-direction:column; gap:.75rem; }
+    .milestone-row { display:flex; align-items:center; gap:1rem; }
+    .milestone-name { font-size:.78rem; font-weight:500; color:var(--muted); white-space:nowrap; min-width:190px; }
+    .bar-track { flex:1; height:5px; background:rgba(255,255,255,.1); border-radius:999px; overflow:hidden; }
+    .bar-fill { height:100%; border-radius:999px; background:linear-gradient(90deg,var(--accent),var(--accent2)); width:0; transition:width 1.3s cubic-bezier(.4,0,.2,1); }
+    .milestone-pct { font-size:.73rem; font-weight:600; color:var(--accent); min-width:2.4rem; text-align:right; }
 
     /* ── SESSION CARDS ── */
-    .section-title {
-      font-size: 0.7rem; font-weight: 600;
-      letter-spacing: 0.15em; text-transform: uppercase;
-      color: var(--muted); margin-bottom: 1.5rem;
-      display: flex; align-items: center; gap: 0.75rem;
-    }
-    .section-title::after {
-      content: ''; flex: 1; height: 1px;
-      background: var(--glass-border);
-    }
+    .section-title { font-size:.68rem; font-weight:600; letter-spacing:.15em; text-transform:uppercase; color:var(--muted); margin-bottom:1.4rem; display:flex; align-items:center; gap:.75rem; }
+    .section-title::after { content:''; flex:1; height:1px; background:var(--glass-border); }
 
-    .session-card {
-      background: var(--glass);
-      border: 1px solid var(--glass-border);
-      backdrop-filter: blur(16px);
-      border-radius: 16px;
-      padding: 1.8rem 2rem;
-      margin-bottom: 1.2rem;
-      opacity: 0; transform: translateY(24px);
-      transition: opacity 0.5s ease, transform 0.5s ease;
-    }
-    .session-card.visible { opacity: 1; transform: translateY(0); }
-    .session-card:hover {
-      border-color: rgba(255,255,255,0.22);
-      background: rgba(255,255,255,0.09);
-    }
+    .session-card { background:var(--glass); border:1px solid var(--glass-border); backdrop-filter:blur(16px); border-radius:16px; padding:1.8rem 2rem; margin-bottom:1.1rem; opacity:0; transform:translateY(22px); transition:opacity .5s ease,transform .5s ease,border-color .2s; }
+    .session-card.visible { opacity:1; transform:none; }
+    .session-card:hover { border-color:rgba(255,255,255,.22); background:rgba(255,255,255,.09); }
+    .card-date { font-size:.68rem; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:var(--accent); margin-bottom:.25rem; }
+    .card-title { font-size:1.02rem; font-weight:600; color:var(--text); margin-bottom:1.1rem; line-height:1.45; }
+    .items-col { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+    @media(max-width:560px){ .items-col{grid-template-columns:1fr;} }
+    .items-group h4 { font-size:.66rem; font-weight:600; letter-spacing:.1em; text-transform:uppercase; margin-bottom:.55rem; }
+    .items-group.done h4 { color:var(--done-color); }
+    .items-group.pending h4 { color:var(--pending-color); }
+    .item { font-size:.83rem; line-height:1.55; color:var(--muted); display:flex; gap:.5rem; margin-bottom:.42rem; }
+    .item-dot { margin-top:.38em; flex-shrink:0; width:5px; height:5px; border-radius:50%; }
+    .done .item-dot { background:var(--done-color); }
+    .pending .item-dot { background:var(--pending-color); }
+    .item.crossed { text-decoration:line-through; opacity:.35; }
 
-    .card-date {
-      font-size: 0.7rem; font-weight: 600;
-      letter-spacing: 0.12em; text-transform: uppercase;
-      color: var(--accent); margin-bottom: 0.3rem;
-    }
-    .card-title {
-      font-size: 1.05rem; font-weight: 600;
-      color: var(--text); margin-bottom: 1.2rem;
-      line-height: 1.4;
-    }
+    /* ── BREAK CARDS ── */
+    .break-card { border-radius:18px; padding:2rem 2.2rem; margin-bottom:1.1rem; position:relative; overflow:hidden; opacity:0; transform:translateY(22px); transition:opacity .5s ease,transform .5s ease; }
+    .break-card.visible { opacity:1; transform:none; }
 
-    .items-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-    @media (max-width: 600px) { .items-col { grid-template-columns: 1fr; } }
+    .break-card.fact { background:linear-gradient(135deg,rgba(124,111,255,.18),rgba(255,111,184,.1)); border:1px solid rgba(124,111,255,.3); }
+    .break-card.quote2 { background:linear-gradient(135deg,rgba(95,255,160,.1),rgba(0,180,255,.1)); border:1px solid rgba(95,255,160,.25); }
+    .break-card.stat { background:linear-gradient(135deg,rgba(255,179,71,.12),rgba(255,100,50,.08)); border:1px solid rgba(255,179,71,.3); }
 
-    .items-group {}
-    .items-group h4 {
-      font-size: 0.68rem; font-weight: 600;
-      letter-spacing: 0.1em; text-transform: uppercase;
-      margin-bottom: 0.6rem;
-    }
-    .items-group.done h4 { color: var(--done-color); }
-    .items-group.pending h4 { color: var(--pending-color); }
+    .break-label { font-size:.62rem; font-weight:700; letter-spacing:.16em; text-transform:uppercase; opacity:.65; margin-bottom:.9rem; }
+    .fact .break-label { color:var(--accent); }
+    .quote2 .break-label { color:var(--done-color); }
+    .stat .break-label { color:var(--pending-color); }
 
-    .item {
-      font-size: 0.85rem; line-height: 1.55;
-      color: var(--muted);
-      display: flex; gap: 0.5rem;
-      margin-bottom: 0.45rem;
-    }
-    .item-dot {
-      margin-top: 0.35em; flex-shrink: 0;
-      width: 6px; height: 6px; border-radius: 50%;
-    }
-    .done .item-dot { background: var(--done-color); }
-    .pending .item-dot { background: var(--pending-color); }
+    .break-card.fact .break-body { font-size:.95rem; line-height:1.7; color:var(--text); font-weight:300; }
+    .break-card.quote2 .break-body { font-family:'Playfair Display',serif; font-size:1.05rem; line-height:1.65; font-style:italic; color:var(--text); }
+    .break-card.quote2 .break-attr { font-size:.78rem; font-weight:600; color:var(--done-color); margin-top:.8rem; letter-spacing:.06em; }
+    .break-card.stat .stat-number { font-family:'Playfair Display',serif; font-size:3rem; font-weight:700; color:var(--pending-color); line-height:1; margin-bottom:.4rem; }
+    .break-card.stat .break-body { font-size:.88rem; line-height:1.6; color:var(--muted); }
 
-    /* strikethrough for completed pending items */
-    .item.crossed { text-decoration: line-through; opacity: 0.4; }
+    .break-card::after { content:''; position:absolute; right:-30px; bottom:-30px; width:120px; height:120px; border-radius:50%; opacity:.06; }
+    .fact::after { background:var(--accent); }
+    .quote2::after { background:var(--done-color); }
+    .stat::after { background:var(--pending-color); }
 
-    /* ── LOADING ── */
-    #loading {
-      text-align: center; padding: 3rem;
-      color: var(--muted); font-size: 0.9rem;
-      display: flex; flex-direction: column; align-items: center; gap: 1rem;
-    }
-    .spinner {
-      width: 28px; height: 28px; border-radius: 50%;
-      border: 2px solid var(--glass-border);
-      border-top-color: var(--accent);
-      animation: spin 0.8s linear infinite;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
+    /* ── LOADING / ERROR ── */
+    #loading { text-align:center; padding:3rem; color:var(--muted); font-size:.9rem; display:flex; flex-direction:column; align-items:center; gap:1rem; }
+    .spinner { width:26px; height:26px; border-radius:50%; border:2px solid var(--glass-border); border-top-color:var(--accent); animation:spin .8s linear infinite; }
+    @keyframes spin { to{transform:rotate(360deg);} }
 
-    /* ── THEME PICKER ── */
-    #theme-switcher {
-      position: fixed; top: 1.2rem; right: 1.2rem; z-index: 100;
-      display: flex; gap: 0.4rem;
-    }
-    .theme-dot {
-      width: 12px; height: 12px; border-radius: 50%;
-      cursor: pointer; border: 2px solid transparent;
-      transition: transform 0.2s, border-color 0.2s;
-    }
-    .theme-dot:hover, .theme-dot.active {
-      transform: scale(1.4); border-color: white;
-    }
+    /* ── THEME SWITCHER ── */
+    #theme-switcher { position:fixed; top:1.2rem; right:1.2rem; z-index:100; display:flex; gap:.4rem; }
+    .theme-dot { width:11px; height:11px; border-radius:50%; cursor:pointer; border:2px solid transparent; transition:transform .2s,border-color .2s; }
+    .theme-dot:hover,.theme-dot.active { transform:scale(1.45); border-color:white; }
 
-    /* scroll fade-in observer target */
-    .fade-target { opacity: 0; transform: translateY(20px); transition: opacity 0.6s, transform 0.6s; }
-    .fade-target.visible { opacity: 1; transform: none; }
+    .fade-target { opacity:0; transform:translateY(18px); transition:opacity .6s,transform .6s; }
+    .fade-target.visible { opacity:1; transform:none; }
   </style>
 </head>
 <body>
-
 <div id="bg"></div>
-
-<!-- Stars injected by JS -->
-
 <div id="theme-switcher"></div>
 
-<!-- HERO -->
 <section id="hero" onclick="scrollToContent()">
   <div class="tag">✦ SGReply DevLog</div>
   <div id="quote-block">
     <span class="quote-mark">"</span>
-    <p id="quote-text">Loading…</p>
+    <p id="quote-text"></p>
     <p id="quote-author"></p>
   </div>
   <div class="hero-hint">
     <span>scroll to see the log</span>
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
   </div>
 </section>
 
-<!-- CONTENT -->
 <section id="content">
   <div class="mission-card fade-target">
     <div class="mission-label">✦ The Mission</div>
     <p class="mission-text" id="mission-text"></p>
     <div class="milestones" id="milestones"></div>
   </div>
-
   <div class="section-title">Session Log</div>
   <div id="log-container">
-    <div id="loading">
-      <div class="spinner"></div>
-      <span>Fetching latest session log…</span>
-    </div>
+    <div id="loading"><div class="spinner"></div><span>Fetching latest session log…</span></div>
   </div>
 </section>
 
 <script>
-// ════════════════════════════════════════════════
-//  CONFIG — edit these to match your setup
-// ════════════════════════════════════════════════
+// ══════════════════════════════════════════════
+//  CONFIG
+// ══════════════════════════════════════════════
 const CONFIG = {
-  // Your GitHub username (owner of the sgreply repo)
-  githubOwner: 'tsngbryan',
-  githubRepo:  'sgreply-devlog',
+  githubOwner:  'tsngbryan',
+  githubRepo:   'sgreply-devlog',
   githubBranch: 'main',
-  logPath: 'session-log.md',
-
+  logPath:      'session-log.md',
   mission: 'Building SGReply — AI-powered WhatsApp auto-reply for Singapore SMEs. Help thousands of businesses respond to customers 24/7 without extra staff. One bot, any industry, set up in minutes.',
-
   milestones: [
-    { name: 'M1 · Foundation',               pct: 80 },
-    { name: 'M2 · Multi-tenant + Handoff',   pct: 8  },
-    { name: 'M3 · Payments + Analytics',     pct: 0  },
+    { name: 'M1 · Foundation',             pct: 80 },
+    { name: 'M2 · Multi-tenant + Handoff', pct: 8  },
+    { name: 'M3 · Payments + Analytics',   pct: 0  },
   ],
 };
 
-// ════════════════════════════════════════════════
-//  THEMES
-// ════════════════════════════════════════════════
+// ══════════════════════════════════════════════
+//  THEMES — each has colours + particle style
+// ══════════════════════════════════════════════
 const THEMES = [
-  { name: 'Cosmic',    from: '#0a0a1f', mid: '#1a0a2e', to: '#0a1a2f', accent: '#7c6fff', accent2: '#ff6fb8',  dot: '#7c6fff' },
-  { name: 'Tokyo',     from: '#0d0d0d', mid: '#1a001a', to: '#001a0d', accent: '#ff2d9b', accent2: '#00fff7',  dot: '#ff2d9b' },
-  { name: 'Ocean',     from: '#020d1a', mid: '#04254a', to: '#041a3a', accent: '#00b4ff', accent2: '#00ffd0',  dot: '#00b4ff' },
-  { name: 'Ember',     from: '#150500', mid: '#2d0f00', to: '#1a0500', accent: '#ff6a00', accent2: '#ffca28',  dot: '#ff6a00' },
-  { name: 'Forest',    from: '#030f08', mid: '#0a2412', to: '#040d0b', accent: '#4cff91', accent2: '#aaff44',  dot: '#4cff91' },
-  { name: 'Aurora',    from: '#030d18', mid: '#062c26', to: '#0d0318', accent: '#00ffc8', accent2: '#c87fff',  dot: '#00ffc8' },
-  { name: 'Sakura',    from: '#1a0012', mid: '#2e0a20', to: '#1a0018', accent: '#ff8fc8', accent2: '#ffc1e3',  dot: '#ff8fc8' },
-  { name: 'Obsidian',  from: '#080808', mid: '#111111', to: '#0a0a0a', accent: '#e0e0e0', accent2: '#aaaaaa',  dot: '#e0e0e0' },
+  { name:'Cosmic',   from:'#0a0a1f', mid:'#1a0a2e', to:'#0a1a2f', accent:'#7c6fff', accent2:'#ff6fb8', hue:'25deg', dur:'14s', dot:'#7c6fff', anim:'stars'   },
+  { name:'Tokyo',    from:'#0d0d0d', mid:'#1a001a', to:'#001a0d', accent:'#ff2d9b', accent2:'#00fff7', hue:'15deg', dur:'10s', dot:'#ff2d9b', anim:'rain'    },
+  { name:'Ocean',    from:'#020d1a', mid:'#04254a', to:'#041a3a', accent:'#00b4ff', accent2:'#00ffd0', hue:'30deg', dur:'16s', dot:'#00b4ff', anim:'orbs'    },
+  { name:'Ember',    from:'#150500', mid:'#2d0f00', to:'#1a0500', accent:'#ff6a00', accent2:'#ffca28', hue:'10deg', dur:'12s', dot:'#ff6a00', anim:'embers'  },
+  { name:'Forest',   from:'#030f08', mid:'#0a2412', to:'#040d0b', accent:'#4cff91', accent2:'#aaff44', hue:'20deg', dur:'18s', dot:'#4cff91', anim:'stars'   },
+  { name:'Aurora',   from:'#030d18', mid:'#062c26', to:'#0d0318', accent:'#00ffc8', accent2:'#c87fff', hue:'35deg', dur:'20s', dot:'#00ffc8', anim:'orbs'    },
+  { name:'Sakura',   from:'#1a0012', mid:'#2e0a20', to:'#1a0018', accent:'#ff8fc8', accent2:'#ffc1e3', hue:'12deg', dur:'15s', dot:'#ff8fc8', anim:'petals'  },
+  { name:'Obsidian', from:'#080808', mid:'#111111', to:'#0a0a0a', accent:'#e0e0e0', accent2:'#aaaaaa', hue:'5deg',  dur:'22s', dot:'#e0e0e0', anim:'stars'   },
 ];
 
-// ════════════════════════════════════════════════
-//  QUOTES
-// ════════════════════════════════════════════════
+// ══════════════════════════════════════════════
+//  HERO QUOTES
+// ══════════════════════════════════════════════
 const QUOTES = [
-  { q: "Design is not just what it looks like and feels like. Design is how it works.", a: "Steve Jobs" },
-  { q: "The only way to do great work is to love what you do.", a: "Steve Jobs" },
-  { q: "If you're not embarrassed by the first version of your product, you've launched too late.", a: "Reid Hoffman" },
-  { q: "Done is better than perfect.", a: "Sheryl Sandberg" },
-  { q: "Make something people want.", a: "Paul Graham" },
-  { q: "Simplicity is the ultimate sophistication.", a: "Leonardo da Vinci" },
-  { q: "The best way to predict the future is to create it.", a: "Peter Drucker" },
-  { q: "Build something 100 people love, not something 1 million people kind of like.", a: "Brian Chesky" },
-  { q: "The secret of getting ahead is getting started.", a: "Mark Twain" },
-  { q: "Move fast. Break things. Learn faster.", a: "Eric Ries" },
-  { q: "Perfection is the enemy of progress.", a: "Winston Churchill" },
-  { q: "You can't connect the dots looking forward; you can only connect them looking backward.", a: "Steve Jobs" },
-  { q: "Chase the vision, not the money; the money will end up following you.", a: "Tony Hsieh" },
-  { q: "Your most unhappy customers are your greatest source of learning.", a: "Bill Gates" },
-  { q: "It's not about ideas. It's about making ideas happen.", a: "Scott Belsky" },
-  { q: "Ships that stay in harbor are safe, but that's not what ships are for.", a: "John A. Shedd" },
-  { q: "Innovation distinguishes between a leader and a follower.", a: "Steve Jobs" },
-  { q: "The way to get started is to quit talking and begin doing.", a: "Walt Disney" },
-  { q: "Stay hungry, stay foolish.", a: "Steve Jobs" },
-  { q: "Work hard in silence. Let success be the noise.", a: "Frank Ocean" },
-  { q: "Every line of code you write is a decision. Make them count.", a: "Unknown" },
-  { q: "Small progress is still progress.", a: "Unknown" },
+  { q:"Design is not just what it looks like. Design is how it works.", a:"Steve Jobs" },
+  { q:"The only way to do great work is to love what you do.", a:"Steve Jobs" },
+  { q:"If you're not embarrassed by the first version of your product, you've launched too late.", a:"Reid Hoffman" },
+  { q:"Done is better than perfect.", a:"Sheryl Sandberg" },
+  { q:"Make something people want.", a:"Paul Graham" },
+  { q:"Simplicity is the ultimate sophistication.", a:"Leonardo da Vinci" },
+  { q:"The best way to predict the future is to create it.", a:"Peter Drucker" },
+  { q:"Build something 100 people love, not something 1 million people kind of like.", a:"Brian Chesky" },
+  { q:"The secret of getting ahead is getting started.", a:"Mark Twain" },
+  { q:"Perfection is the enemy of progress.", a:"Winston Churchill" },
+  { q:"You can't connect the dots looking forward; you can only connect them looking backward.", a:"Steve Jobs" },
+  { q:"Chase the vision, not the money; the money will end up following you.", a:"Tony Hsieh" },
+  { q:"Your most unhappy customers are your greatest source of learning.", a:"Bill Gates" },
+  { q:"It's not about ideas. It's about making ideas happen.", a:"Scott Belsky" },
+  { q:"Ships that stay in harbor are safe, but that's not what ships are for.", a:"John A. Shedd" },
+  { q:"Innovation distinguishes between a leader and a follower.", a:"Steve Jobs" },
+  { q:"The way to get started is to quit talking and begin doing.", a:"Walt Disney" },
+  { q:"Stay hungry, stay foolish.", a:"Steve Jobs" },
+  { q:"Small progress is still progress.", a:"Unknown" },
+  { q:"Every great developer you know got there by solving problems they were unqualified to solve.", a:"Patrick McKenzie" },
 ];
 
-// ════════════════════════════════════════════════
-//  THEME INIT
-// ════════════════════════════════════════════════
-let currentThemeIdx = parseInt(localStorage.getItem('devlog-theme') ?? Math.floor(Math.random() * THEMES.length));
+// ══════════════════════════════════════════════
+//  BREAK CARDS — inserted between log entries
+// ══════════════════════════════════════════════
+const BREAKS = [
+  { type:'stat', number:'2B+', body:'WhatsApp users worldwide — making it the most-used messaging app on the planet.' },
+  { type:'stat', number:'90%', body:'of Singaporeans use WhatsApp regularly, one of the highest adoption rates in Southeast Asia.' },
+  { type:'stat', number:'$27B', body:'projected global chatbot market size by 2030, growing at 23% per year.' },
+  { type:'stat', number:'200M+', body:'businesses actively use WhatsApp Business every month to connect with customers.' },
+  { type:'stat', number:'80%', body:'of routine customer queries can be handled by AI chatbots without human intervention.' },
+  { type:'stat', number:'33%', body:'cheaper — the average cost saving of handling customer service via messaging vs phone.' },
+  { type:'stat', number:'64%', body:'of people prefer messaging a business over calling them, across all age groups.' },
+  { type:'stat', number:'99%', body:'of Singapore businesses are SMEs — the exact market SGReply is built for.' },
+  { type:'fact', body:'🤖 The first chatbot, ELIZA, was created at MIT in 1966 — nearly 60 years before ChatGPT made AI mainstream.' },
+  { type:'fact', body:'📱 WhatsApp was acquired by Facebook for $19 billion in 2014 — at the time, the largest acquisition of a venture-backed startup ever.' },
+  { type:'fact', body:'🇸🇬 Singapore\'s digital economy contributes approximately 17% of GDP, one of the highest shares in Asia.' },
+  { type:'fact', body:'⚡ The average person checks their phone 96 times a day — about once every 10 minutes. For customer enquiries, that means fast replies win.' },
+  { type:'fact', body:'📊 53% of customers say they are more likely to shop with a business they can message directly. Response time is a competitive advantage.' },
+  { type:'fact', body:'🏆 Singapore ranks consistently in the top 5 globally for digital infrastructure, broadband speed, and tech-readiness — a strong foundation for AI tools.' },
+  { type:'fact', body:'💬 Businesses that respond to enquiries within 5 minutes are 100× more likely to qualify a lead than those that wait 30 minutes.' },
+  { type:'quote2', q:"The customer is not a moron. She is your wife.", a:"David Ogilvy" },
+  { type:'quote2', q:"Get closer than ever to your customers. So close that you tell them what they need well before they realise it themselves.", a:"Steve Jobs" },
+  { type:'quote2', q:"Your brand is what people say about you when you're not in the room.", a:"Jeff Bezos" },
+  { type:'quote2', q:"We see our customers as invited guests to a party, and we are the hosts.", a:"Jeff Bezos" },
+  { type:'quote2', q:"The goal of a company is to make something people want to buy — not to make money.", a:"Paul Graham" },
+  { type:'quote2', q:"A small group of committed citizens can change the world. Indeed, it's the only thing that ever has.", a:"Margaret Mead" },
+  { type:'quote2', q:"The best marketing doesn't feel like marketing.", a:"Tom Fishburne" },
+];
+
+// ══════════════════════════════════════════════
+//  THEME — always random on each page load
+// ══════════════════════════════════════════════
+const currentThemeIdx = Math.floor(Math.random() * THEMES.length);
 
 function applyTheme(idx) {
-  currentThemeIdx = idx;
-  localStorage.setItem('devlog-theme', idx);
   const t = THEMES[idx];
   const r = document.documentElement.style;
-  r.setProperty('--accent',    t.accent);
-  r.setProperty('--accent2',   t.accent2);
-  r.setProperty('--bg-from',   t.from);
-  r.setProperty('--bg-mid',    t.mid);
-  r.setProperty('--bg-to',     t.to);
-  document.querySelectorAll('.theme-dot').forEach((d, i) => d.classList.toggle('active', i === idx));
+  r.setProperty('--accent',   t.accent);
+  r.setProperty('--accent2',  t.accent2);
+  r.setProperty('--bg-from',  t.from);
+  r.setProperty('--bg-mid',   t.mid);
+  r.setProperty('--bg-to',    t.to);
+  r.setProperty('--bg-hue',   t.hue);
+  r.setProperty('--bg-dur',   t.dur);
+  document.querySelectorAll('.theme-dot').forEach((d,i) => d.classList.toggle('active', i === idx));
+  respawnParticles(t.anim, t.accent, t.accent2);
 }
 
 function buildThemeSwitcher() {
   const sw = document.getElementById('theme-switcher');
-  THEMES.forEach((t, i) => {
+  THEMES.forEach((t,i) => {
     const d = document.createElement('div');
     d.className = 'theme-dot';
     d.title = t.name;
@@ -420,229 +303,229 @@ function buildThemeSwitcher() {
     d.onclick = (e) => { e.stopPropagation(); applyTheme(i); };
     sw.appendChild(d);
   });
-  applyTheme(currentThemeIdx);
 }
 
-// ════════════════════════════════════════════════
-//  STARS
-// ════════════════════════════════════════════════
-function makeStars(n = 80) {
-  for (let i = 0; i < n; i++) {
-    const s = document.createElement('div');
-    s.className = 'star';
-    const size = Math.random() * 2.5 + 0.5;
-    s.style.cssText = `
-      width:${size}px; height:${size}px;
-      left:${Math.random()*100}vw; top:${Math.random()*100}vh;
-      --dur:${(Math.random()*4+2).toFixed(1)}s;
-      --max-op:${(Math.random()*0.6+0.2).toFixed(2)};
-      animation-delay:${(Math.random()*4).toFixed(1)}s;
-    `;
-    document.body.appendChild(s);
+// ══════════════════════════════════════════════
+//  PARTICLES
+// ══════════════════════════════════════════════
+function clearParticles() {
+  document.querySelectorAll('[class^="p-"]').forEach(el => el.remove());
+}
+
+function rand(min, max) { return Math.random() * (max - min) + min; }
+
+function makeStars(n=80, c1, c2) {
+  for (let i=0;i<n;i++) {
+    const el = document.createElement('div');
+    el.className = 'p-star';
+    const size = rand(.5,2.8);
+    el.style.cssText = `width:${size}px;height:${size}px;left:${rand(0,100)}vw;top:${rand(0,100)}vh;--dur:${rand(2,5).toFixed(1)}s;--op:${rand(.2,.75).toFixed(2)};animation-delay:${rand(0,5).toFixed(1)}s;`;
+    document.body.appendChild(el);
   }
 }
 
-// ════════════════════════════════════════════════
-//  QUOTE
-// ════════════════════════════════════════════════
+function makeEmbers(n=60, c1, c2) {
+  const colors = [c1, c2, '#fff8dc', '#ffd700'];
+  for (let i=0;i<n;i++) {
+    const el = document.createElement('div');
+    el.className = 'p-ember';
+    const size = rand(2,6);
+    el.style.cssText = `width:${size}px;height:${size}px;left:${rand(0,100)}vw;bottom:${rand(-10,30)}vh;background:${colors[Math.floor(Math.random()*colors.length)]};--dur:${rand(4,10).toFixed(1)}s;--op:${rand(.4,.8).toFixed(2)};--drift:${rand(-40,40).toFixed(0)}px;animation-delay:${rand(0,8).toFixed(1)}s;border-radius:50%;`;
+    document.body.appendChild(el);
+  }
+}
+
+function makePetals(n=40, c1, c2) {
+  const colors = [c1, c2, 'rgba(255,200,220,.8)', 'rgba(255,230,240,.6)'];
+  for (let i=0;i<n;i++) {
+    const el = document.createElement('div');
+    el.className = 'p-petal';
+    const size = rand(6,16);
+    el.style.cssText = `width:${size}px;height:${size * rand(.6,1)}px;left:${rand(-5,105)}vw;top:${rand(-20,0)}vh;background:${colors[Math.floor(Math.random()*colors.length)]};--dur:${rand(6,14).toFixed(1)}s;--op:${rand(.3,.7).toFixed(2)};--drift:${rand(-60,60).toFixed(0)}px;animation-delay:${rand(0,12).toFixed(1)}s;opacity:0;`;
+    document.body.appendChild(el);
+  }
+}
+
+function makeRain(n=80, c1, c2) {
+  for (let i=0;i<n;i++) {
+    const el = document.createElement('div');
+    el.className = 'p-rain';
+    const h = rand(40,140);
+    el.style.cssText = `height:${h}px;left:${rand(0,100)}vw;top:${rand(-30,0)}vh;--rain-color:${c1};--dur:${rand(.8,2).toFixed(2)}s;animation-delay:${rand(0,3).toFixed(2)}s;opacity:0;`;
+    document.body.appendChild(el);
+  }
+}
+
+function makeOrbs(n=8, c1, c2) {
+  const colors = [c1, c2];
+  for (let i=0;i<n;i++) {
+    const el = document.createElement('div');
+    el.className = 'p-orb';
+    const size = rand(150,350);
+    el.style.cssText = `width:${size}px;height:${size}px;left:${rand(0,80)}vw;top:${rand(0,80)}vh;background:${colors[i%2]};--dur:${rand(14,28).toFixed(0)}s;--op:${rand(.08,.18).toFixed(2)};--dx:${rand(-80,80).toFixed(0)}px;--dy:${rand(-60,60).toFixed(0)}px;--dx2:${rand(-50,50).toFixed(0)}px;--dy2:${rand(-80,80).toFixed(0)}px;animation-delay:${rand(0,10).toFixed(1)}s;`;
+    document.body.appendChild(el);
+  }
+}
+
+function respawnParticles(anim, c1, c2) {
+  clearParticles();
+  if (anim==='stars')  makeStars(90, c1, c2);
+  if (anim==='embers') makeEmbers(55, c1, c2);
+  if (anim==='petals') makePetals(45, c1, c2);
+  if (anim==='rain')   makeRain(75, c1, c2);
+  if (anim==='orbs')   { makeOrbs(8, c1, c2); makeStars(30, c1, c2); }
+}
+
+// ══════════════════════════════════════════════
+//  QUOTE + MISSION
+// ══════════════════════════════════════════════
 function setQuote() {
-  const q = QUOTES[Math.floor(Math.random() * QUOTES.length)];
+  const q = QUOTES[Math.floor(Math.random()*QUOTES.length)];
   document.getElementById('quote-text').textContent = q.q;
   document.getElementById('quote-author').textContent = '— ' + q.a;
 }
 
-// ════════════════════════════════════════════════
-//  MISSION + MILESTONES
-// ════════════════════════════════════════════════
 function buildMission() {
   document.getElementById('mission-text').textContent = CONFIG.mission;
-  const container = document.getElementById('milestones');
+  const c = document.getElementById('milestones');
   CONFIG.milestones.forEach(m => {
     const row = document.createElement('div');
     row.className = 'milestone-row';
-    row.innerHTML = `
-      <span class="milestone-name">${m.name}</span>
-      <div class="bar-track"><div class="bar-fill" data-pct="${m.pct}" style="width:0%"></div></div>
-      <span class="milestone-pct">${m.pct}%</span>
-    `;
-    container.appendChild(row);
+    row.innerHTML = `<span class="milestone-name">${m.name}</span><div class="bar-track"><div class="bar-fill" data-pct="${m.pct}"></div></div><span class="milestone-pct">${m.pct}%</span>`;
+    c.appendChild(row);
   });
 }
 
 function animateBars() {
-  document.querySelectorAll('.bar-fill').forEach(b => {
-    setTimeout(() => { b.style.width = b.dataset.pct + '%'; }, 200);
-  });
+  document.querySelectorAll('.bar-fill').forEach(b => setTimeout(()=>{ b.style.width=b.dataset.pct+'%'; },200));
 }
 
-// ════════════════════════════════════════════════
-//  PARSE SESSION LOG MARKDOWN
-// ════════════════════════════════════════════════
+// ══════════════════════════════════════════════
+//  PARSE SESSION LOG
+// ══════════════════════════════════════════════
 function parseSessionLog(md) {
-  // Split on '---' horizontal rules (entry separators)
-  const rawEntries = md.split(/\n---\n/).filter(s => s.trim());
-
-  // Skip the title block (first block before any ## heading)
-  const entries = rawEntries.filter(e => /^##\s/m.test(e));
-
-  return entries.map(entry => {
-    const lines = entry.trim().split('\n');
-
-    // First ## line is the heading
-    const headingLine = lines.find(l => /^##\s/.test(l)) || '';
-    const headingText = headingLine.replace(/^##\s*/, '').trim();
-
-    // Extract date (YYYY-MM-DD) from heading
-    const dateMatch = headingText.match(/(\d{4}-\d{2}-\d{2})/);
-    const date = dateMatch ? dateMatch[1] : '';
-
-    // Extract subtitle (after the —)
-    const subtitle = headingText.replace(/^[\d-]+\s*[—–-]\s*/, '').trim();
-
-    // Parse ### Done and ### Pending sections
-    const doneItems    = extractItems(entry, 'Done');
-    const pendingItems = extractItems(entry, 'Pending');
-
-    return { date, subtitle, doneItems, pendingItems };
-  });
+  return md.split(/\n---\n/)
+    .filter(s => /^##\s/m.test(s))
+    .map(entry => {
+      const lines = entry.trim().split('\n');
+      const heading = (lines.find(l=>/^##\s/.test(l))||'').replace(/^##\s*/,'').trim();
+      const date = (heading.match(/(\d{4}-\d{2}-\d{2})/)||['',''])[1];
+      const subtitle = heading.replace(/^[\d/\s–—-]+/,'').replace(/^[—–-]\s*/,'').trim();
+      return { date, subtitle, doneItems:extractItems(entry,'Done'), pendingItems:extractItems(entry,'Pending') };
+    });
 }
 
 function extractItems(section, heading) {
-  const regex = new RegExp(`###\\s*${heading}\\s*\\n([\\s\\S]*?)(?=###|$)`, 'i');
-  const match = section.match(regex);
-  if (!match) return [];
-
-  return match[1]
-    .split('\n')
-    .filter(l => l.trim().startsWith('-'))
-    .map(l => {
-      const text = l.replace(/^-\s*/, '').trim();
-      const crossed = /~~.*~~/.test(text);
-      const clean = text
-        .replace(/~~(.*?)~~/g, '$1')
-        .replace(/✅.*$/, '')
-        .replace(/\*\*(.*?)\*\*/g, '$1')  // remove bold
-        .trim();
-      return { text: clean, crossed };
-    });
+  const m = section.match(new RegExp(`###\\s*${heading}\\s*\\n([\\s\\S]*?)(?=###|$)`,'i'));
+  if (!m) return [];
+  return m[1].split('\n').filter(l=>l.trim().startsWith('-')).map(l=>{
+    const text = l.replace(/^-\s*/,'').trim();
+    const crossed = /~~.*~~/.test(text);
+    const clean = text.replace(/~~(.*?)~~/g,'$1').replace(/✅.*$/,'').replace(/\*\*(.*?)\*\*/g,'$1').trim();
+    return { text:clean, crossed };
+  });
 }
 
-// ════════════════════════════════════════════════
-//  RENDER SESSION CARDS
-// ════════════════════════════════════════════════
+// ══════════════════════════════════════════════
+//  RENDER — session cards + break cards interleaved
+// ══════════════════════════════════════════════
+function buildBreakCard(item) {
+  const el = document.createElement('div');
+  el.className = `break-card ${item.type}`;
+  if (item.type==='stat') {
+    el.innerHTML = `<div class="break-label">✦ By the numbers</div><div class="stat-number">${item.number}</div><div class="break-body">${item.body}</div>`;
+  } else if (item.type==='quote2') {
+    el.innerHTML = `<div class="break-label">✦ Worth remembering</div><div class="break-body">${item.q}</div><div class="break-attr">— ${item.a}</div>`;
+  } else {
+    el.innerHTML = `<div class="break-label">✦ Did you know?</div><div class="break-body">${item.body}</div>`;
+  }
+  return el;
+}
+
+function shuffleArray(arr) {
+  const a = [...arr];
+  for (let i=a.length-1;i>0;i--) { const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; }
+  return a;
+}
+
 function renderCards(entries) {
   const container = document.getElementById('log-container');
   container.innerHTML = '';
+  if (!entries.length) { container.innerHTML='<p style="color:var(--muted);text-align:center;padding:2rem">No entries found.</p>'; return; }
 
-  if (!entries.length) {
-    container.innerHTML = '<p style="color:var(--muted);text-align:center;padding:2rem">No entries found in session log.</p>';
-    return;
-  }
+  // Pre-shuffle breaks so order is different each load
+  const breaks = shuffleArray(BREAKS);
+  let breakIdx = 0;
 
   entries.forEach((e, i) => {
+    // Session card
     const card = document.createElement('div');
     card.className = 'session-card';
-    card.style.transitionDelay = `${i * 80}ms`;
-
-    const doneHtml = e.doneItems.map(item =>
-      `<div class="item${item.crossed ? ' crossed' : ''}">
-        <span class="item-dot"></span>
-        <span>${item.text}</span>
-      </div>`
-    ).join('');
-
-    const pendingHtml = e.pendingItems.map(item =>
-      `<div class="item${item.crossed ? ' crossed' : ''}">
-        <span class="item-dot"></span>
-        <span>${item.text}</span>
-      </div>`
-    ).join('');
-
+    card.style.transitionDelay = `${i*70}ms`;
+    const doneHtml = e.doneItems.map(it=>`<div class="item${it.crossed?' crossed':''}"><span class="item-dot"></span><span>${it.text}</span></div>`).join('');
+    const pendHtml = e.pendingItems.map(it=>`<div class="item${it.crossed?' crossed':''}"><span class="item-dot"></span><span>${it.text}</span></div>`).join('');
     card.innerHTML = `
       <div class="card-date">${formatDate(e.date)}</div>
-      <div class="card-title">${e.subtitle || 'Session'}</div>
+      <div class="card-title">${e.subtitle||'Session'}</div>
       <div class="items-col">
-        <div class="items-group done">
-          <h4>✓ Done</h4>
-          ${doneHtml || '<div class="item"><span class="item-dot"></span><span style="opacity:.4">—</span></div>'}
-        </div>
-        <div class="items-group pending">
-          <h4>→ Pending</h4>
-          ${pendingHtml || '<div class="item"><span class="item-dot"></span><span style="opacity:.4">—</span></div>'}
-        </div>
-      </div>
-    `;
+        <div class="items-group done"><h4>✓ Done</h4>${doneHtml||'<div class="item"><span class="item-dot"></span><span style="opacity:.3">—</span></div>'}</div>
+        <div class="items-group pending"><h4>→ Pending</h4>${pendHtml||'<div class="item"><span class="item-dot"></span><span style="opacity:.3">—</span></div>'}</div>
+      </div>`;
     container.appendChild(card);
+
+    // Insert a break card after every 2 session entries (not after the last one)
+    if ((i+1) % 2 === 0 && i < entries.length-1) {
+      const bc = buildBreakCard(breaks[breakIdx % breaks.length]);
+      bc.style.transitionDelay = `${(i+0.5)*70}ms`;
+      container.appendChild(bc);
+      breakIdx++;
+    }
   });
 
-  // Intersection observer for fade-in
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
-  }, { threshold: 0.1 });
-  document.querySelectorAll('.session-card').forEach(c => observer.observe(c));
+  // Intersection observer fade-in for all cards
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);} });
+  }, {threshold:.08});
+  document.querySelectorAll('.session-card,.break-card').forEach(c=>obs.observe(c));
 }
 
-function formatDate(dateStr) {
-  if (!dateStr) return '';
-  try {
-    return new Date(dateStr + 'T12:00:00').toLocaleDateString('en-GB', {
-      weekday: 'short', day: 'numeric', month: 'long', year: 'numeric'
-    });
-  } catch { return dateStr; }
+function formatDate(d) {
+  if (!d) return '';
+  try { return new Date(d+'T12:00:00').toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'long',year:'numeric'}); }
+  catch { return d; }
 }
 
-// ════════════════════════════════════════════════
-//  FETCH MARKDOWN
-// ════════════════════════════════════════════════
+// ══════════════════════════════════════════════
+//  FETCH
+// ══════════════════════════════════════════════
 async function fetchLog() {
-  if (CONFIG.githubOwner === 'YOUR_GITHUB_USERNAME') {
-    document.getElementById('loading').innerHTML = `
-      <span style="color:var(--pending-color)">⚠ Set your GitHub username in <code>CONFIG.githubOwner</code> inside <code>index.html</code></span>`;
-    return;
-  }
-
   const url = `https://raw.githubusercontent.com/${CONFIG.githubOwner}/${CONFIG.githubRepo}/${CONFIG.githubBranch}/${CONFIG.logPath}`;
-
   try {
     const res = await fetch(url);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const md = await res.text();
-    const entries = parseSessionLog(md);
-    renderCards(entries);
+    renderCards(parseSessionLog(await res.text()));
     animateBars();
-  } catch (err) {
-    document.getElementById('log-container').innerHTML = `
-      <div style="text-align:center;padding:2rem;color:var(--pending-color)">
-        <p style="margin-bottom:.5rem">Could not fetch session log.</p>
-        <p style="font-size:.8rem;opacity:.6">${err.message}</p>
-        <p style="font-size:.75rem;opacity:.5;margin-top:.5rem">Make sure the repo is public, or open this file via a local server.</p>
-      </div>`;
+  } catch(err) {
+    document.getElementById('log-container').innerHTML = `<div style="text-align:center;padding:2rem;color:var(--pending-color)"><p>Could not fetch session log.</p><p style="font-size:.78rem;opacity:.5;margin-top:.4rem">${err.message}</p></div>`;
     animateBars();
   }
 }
 
-// ════════════════════════════════════════════════
-//  SCROLL HELPER
-// ════════════════════════════════════════════════
-function scrollToContent() {
-  document.getElementById('content').scrollIntoView({ behavior: 'smooth' });
-}
+// ══════════════════════════════════════════════
+//  HELPERS
+// ══════════════════════════════════════════════
+function scrollToContent() { document.getElementById('content').scrollIntoView({behavior:'smooth'}); }
 
-// Fade-in observer for mission card
 function observeFadeTargets() {
-  const obs = new IntersectionObserver(entries => {
-    entries.forEach(e => {
-      if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); }
-    });
-  }, { threshold: 0.15 });
-  document.querySelectorAll('.fade-target').forEach(el => obs.observe(el));
+  const obs = new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});},{threshold:.12});
+  document.querySelectorAll('.fade-target').forEach(el=>obs.observe(el));
 }
 
-// ════════════════════════════════════════════════
+// ══════════════════════════════════════════════
 //  INIT
-// ════════════════════════════════════════════════
+// ══════════════════════════════════════════════
 buildThemeSwitcher();
-makeStars(100);
+applyTheme(currentThemeIdx);   // always random — no localStorage
 setQuote();
 buildMission();
 observeFadeTargets();
