@@ -3,6 +3,23 @@ _Most recent session at the top. Updated at the end of each working session._
 
 ---
 
+## 2026-03-12 — Frontend migrated to Railway, devlog photo refresh
+
+### Done
+- Frontend migrated from Lovable to Railway — React/Vite now lives in `client/`, served by Express
+- sgreply.com now points to Railway (Porkbun ALIAS record updated)
+- Health check moved from `GET /` to `GET /api/health`; railway.toml updated
+- Sitemap HTML-instead-of-XML issue resolved — no more SPA catch-all interfering
+- DevLog viewer refreshed — full-page background images, 90 location scenes, no animations
+
+### Pending
+- Submit sitemaps to Google Search Console and Bing Webmaster Tools
+- Update learn site header to match sgreply.com navigation
+- Add article card images + rename listing page to /articles
+- Verify frontend auth flows work correctly post-migration (same-origin API calls)
+
+---
+
 ## 2026-03-11 — SEO, learn blog, devlog viewer
 
 ### Done
@@ -12,7 +29,7 @@ _Most recent session at the top. Updated at the end of each working session._
 - Session log system set up — auto-updates at end of each session, synced to public devlog repo
 
 ### Pending
-- Fix sgreply.com/sitemap.xml returning HTML instead of XML (Lovable CDN catch-all issue)
+- ~~Fix sgreply.com/sitemap.xml returning HTML~~ ✅ resolved by Railway migration 2026-03-12
 - Submit sitemaps to Google Search Console and Bing Webmaster Tools
 - Update learn site header to match sgreply.com navigation
 - Add article card images + rename listing page to /articles
@@ -29,7 +46,7 @@ _Most recent session at the top. Updated at the end of each working session._
 
 ### Pending
 - ~~learn.sgreply.com blog~~ ✅ done 2026-03-11
-- WhatsApp settings hub on frontend (Lovable prompt written, pending implementation)
+- WhatsApp settings hub on frontend (pending implementation in `client/`)
 - Email/SMS auth confirmations (M1 remaining)
 - Client message approval flow for low-confidence replies
 
