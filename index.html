@@ -21,74 +21,44 @@
     body { font-family: 'Inter', system-ui, sans-serif; color: var(--text); min-height: 100vh; overflow-x: hidden; background: var(--bg-from); }
 
     /* ── BACKGROUND ── */
-    #bg {
-      position: fixed; inset: 0; z-index: 0;
+    #bg { position: fixed; inset: 0; z-index: 0;
       background: linear-gradient(135deg, var(--bg-from) 0%, var(--bg-mid) 50%, var(--bg-to) 100%);
-      animation: bgShift var(--bg-dur, 14s) ease-in-out infinite alternate;
-    }
+      animation: bgShift var(--bg-dur,14s) ease-in-out infinite alternate; }
     @keyframes bgShift {
       0%   { filter: hue-rotate(0deg) brightness(1) saturate(1); }
-      100% { filter: hue-rotate(var(--bg-hue, 25deg)) brightness(1.12) saturate(1.1); }
-    }
+      100% { filter: hue-rotate(var(--bg-hue,25deg)) brightness(1.12) saturate(1.1); } }
 
-    /* ── PARTICLES: stars ── */
-    .p-star { position: fixed; border-radius: 50%; background: white; z-index: 1;
-      animation: twinkle var(--dur,3s) ease-in-out infinite alternate var(--delay,0s); opacity: 0; }
-    @keyframes twinkle { 0% { opacity:0; transform:scale(.8); } 100% { opacity:var(--op,.6); transform:scale(1.3); } }
-
-    /* ── PARTICLES: rising embers ── */
-    .p-ember { position: fixed; border-radius: 50%; z-index: 1;
-      animation: rise var(--dur,6s) ease-in infinite var(--delay,0s); opacity: 0; }
-    @keyframes rise {
-      0%   { opacity:0; transform: translateY(0) scale(1); }
-      20%  { opacity: var(--op,.7); }
-      80%  { opacity: var(--op,.4); }
-      100% { opacity:0; transform: translateY(-100vh) scale(.3) translateX(var(--drift,20px)); }
-    }
-
-    /* ── PARTICLES: falling petals ── */
-    .p-petal { position: fixed; border-radius: 60% 40% 50% 50%; z-index: 1;
-      animation: fall var(--dur,8s) ease-in infinite var(--delay,0s); opacity:0; }
-    @keyframes fall {
-      0%   { opacity:0; transform: translateY(-40px) rotate(0deg); }
-      10%  { opacity: var(--op,.6); }
-      90%  { opacity: var(--op,.3); }
-      100% { opacity:0; transform: translateY(110vh) rotate(360deg) translateX(var(--drift,30px)); }
-    }
-
-    /* ── PARTICLES: rain ── */
-    .p-rain { position: fixed; width: 1px; border-radius: 1px; z-index: 1;
-      background: linear-gradient(to bottom, transparent, var(--rain-color, rgba(0,200,255,.4)));
-      animation: rainFall var(--dur,1.2s) linear infinite var(--delay,0s); opacity:0; }
-    @keyframes rainFall {
-      0%   { opacity:0; transform: translateY(-20px); }
-      10%  { opacity:1; }
-      90%  { opacity:.6; }
-      100% { opacity:0; transform: translateY(110vh); }
-    }
-
-    /* ── PARTICLES: drifting orbs ── */
-    .p-orb { position: fixed; border-radius: 50%; z-index: 1; filter: blur(40px);
+    /* ── PARTICLES ── */
+    .p-star { position:fixed; border-radius:50%; background:white; z-index:1; opacity:0;
+      animation: twinkle var(--dur,3s) ease-in-out infinite alternate var(--delay,0s); }
+    @keyframes twinkle { 0%{opacity:0;transform:scale(.8);}100%{opacity:var(--op,.6);transform:scale(1.3);} }
+    .p-ember { position:fixed; border-radius:50%; z-index:1; opacity:0;
+      animation: rise var(--dur,6s) ease-in infinite var(--delay,0s); }
+    @keyframes rise { 0%{opacity:0;transform:translateY(0) scale(1);}20%{opacity:var(--op,.7);}80%{opacity:var(--op,.4);}100%{opacity:0;transform:translateY(-100vh) scale(.3) translateX(var(--drift,20px));} }
+    .p-petal { position:fixed; border-radius:60% 40% 50% 50%; z-index:1; opacity:0;
+      animation: fall var(--dur,8s) ease-in infinite var(--delay,0s); }
+    @keyframes fall { 0%{opacity:0;transform:translateY(-40px) rotate(0deg);}10%{opacity:var(--op,.6);}90%{opacity:var(--op,.3);}100%{opacity:0;transform:translateY(110vh) rotate(360deg) translateX(var(--drift,30px));} }
+    .p-rain { position:fixed; width:1px; border-radius:1px; z-index:1; opacity:0;
+      background:linear-gradient(to bottom,transparent,var(--rain-color,rgba(0,200,255,.4)));
+      animation: rainFall var(--dur,1.2s) linear infinite var(--delay,0s); }
+    @keyframes rainFall { 0%{opacity:0;transform:translateY(-20px);}10%{opacity:1;}90%{opacity:.6;}100%{opacity:0;transform:translateY(110vh);} }
+    .p-orb { position:fixed; border-radius:50%; z-index:1; filter:blur(40px);
       animation: orbDrift var(--dur,20s) ease-in-out infinite alternate var(--delay,0s); }
-    @keyframes orbDrift {
-      0%   { transform: translate(0,0) scale(1); opacity: var(--op,.12); }
-      50%  { transform: translate(var(--dx,40px), var(--dy,-30px)) scale(1.2); opacity: calc(var(--op,.12) * 1.5); }
-      100% { transform: translate(var(--dx2,-20px), var(--dy2,50px)) scale(.8); opacity: var(--op,.12); }
-    }
+    @keyframes orbDrift { 0%{transform:translate(0,0) scale(1);opacity:var(--op,.12);}50%{transform:translate(var(--dx,40px),var(--dy,-30px)) scale(1.2);opacity:calc(var(--op,.12)*1.5);}100%{transform:translate(var(--dx2,-20px),var(--dy2,50px)) scale(.8);opacity:var(--op,.12);} }
 
     /* ── HERO ── */
     #hero { position:relative; z-index:10; min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:2rem; cursor:pointer; }
-    #quote-block { max-width:680px; animation: floatY 7s ease-in-out infinite alternate; }
-    @keyframes floatY { 0% { transform:translateY(0); } 100% { transform:translateY(-16px); } }
+    #quote-block { max-width:680px; animation:floatY 7s ease-in-out infinite alternate; }
+    @keyframes floatY { 0%{transform:translateY(0);}100%{transform:translateY(-16px);} }
     .quote-mark { font-family:'Playfair Display',serif; font-size:clamp(5rem,12vw,9rem); line-height:.5; color:var(--accent); opacity:.3; display:block; margin-bottom:-1.5rem; }
     #quote-text { font-family:'Playfair Display',serif; font-size:clamp(1.25rem,3.2vw,2rem); line-height:1.6; font-style:italic; color:var(--text); text-shadow:0 2px 40px rgba(0,0,0,.6); margin-bottom:1.3rem; }
     #quote-author { font-size:.9rem; font-weight:600; letter-spacing:.14em; text-transform:uppercase; color:var(--accent); opacity:.85; }
     .hero-hint { position:absolute; bottom:2.5rem; display:flex; flex-direction:column; align-items:center; gap:.4rem; font-size:.78rem; color:var(--muted); letter-spacing:.1em; animation:bounce 2.2s ease-in-out infinite; }
-    @keyframes bounce { 0%,100%{transform:translateY(0);} 50%{transform:translateY(7px);} }
+    @keyframes bounce { 0%,100%{transform:translateY(0);}50%{transform:translateY(7px);} }
     .tag { display:inline-block; background:var(--glass); border:1px solid var(--glass-border); backdrop-filter:blur(10px); border-radius:999px; padding:.35rem 1.1rem; font-size:.72rem; letter-spacing:.1em; text-transform:uppercase; color:var(--accent); margin-bottom:1.8rem; font-weight:600; }
 
     /* ── CONTENT ── */
-    #content { position:relative; z-index:10; max-width:860px; margin:0 auto; padding:0 1.5rem 6rem; }
+    #content { position:relative; z-index:10; max-width:860px; margin:0 auto; padding:0 1.5rem 0; }
 
     /* ── MISSION ── */
     .mission-card { background:var(--glass); border:1px solid var(--glass-border); backdrop-filter:blur(20px); border-radius:20px; padding:2.2rem 2.5rem; margin-bottom:3rem; position:relative; overflow:hidden; }
@@ -105,7 +75,6 @@
     /* ── SESSION CARDS ── */
     .section-title { font-size:.68rem; font-weight:600; letter-spacing:.15em; text-transform:uppercase; color:var(--muted); margin-bottom:1.4rem; display:flex; align-items:center; gap:.75rem; }
     .section-title::after { content:''; flex:1; height:1px; background:var(--glass-border); }
-
     .session-card { background:var(--glass); border:1px solid var(--glass-border); backdrop-filter:blur(16px); border-radius:16px; padding:1.8rem 2rem; margin-bottom:1.1rem; opacity:0; transform:translateY(22px); transition:opacity .5s ease,transform .5s ease,border-color .2s; }
     .session-card.visible { opacity:1; transform:none; }
     .session-card:hover { border-color:rgba(255,255,255,.22); background:rgba(255,255,255,.09); }
@@ -123,39 +92,63 @@
     .item.crossed { text-decoration:line-through; opacity:.35; }
 
     /* ── BREAK CARDS ── */
-    .break-card { border-radius:18px; padding:2rem 2.2rem; margin-bottom:1.1rem; position:relative; overflow:hidden; opacity:0; transform:translateY(22px); transition:opacity .5s ease,transform .5s ease; }
+    .break-card { border-radius:18px; margin-bottom:1.1rem; position:relative; overflow:hidden; opacity:0; transform:translateY(22px); transition:opacity .5s ease,transform .5s ease; }
     .break-card.visible { opacity:1; transform:none; }
-
+    .break-inner { padding:1.8rem 2rem; }
     .break-card.fact { background:linear-gradient(135deg,rgba(124,111,255,.18),rgba(255,111,184,.1)); border:1px solid rgba(124,111,255,.3); }
     .break-card.quote2 { background:linear-gradient(135deg,rgba(95,255,160,.1),rgba(0,180,255,.1)); border:1px solid rgba(95,255,160,.25); }
     .break-card.stat { background:linear-gradient(135deg,rgba(255,179,71,.12),rgba(255,100,50,.08)); border:1px solid rgba(255,179,71,.3); }
-
     .break-label { font-size:.62rem; font-weight:700; letter-spacing:.16em; text-transform:uppercase; opacity:.65; margin-bottom:.9rem; }
     .fact .break-label { color:var(--accent); }
     .quote2 .break-label { color:var(--done-color); }
     .stat .break-label { color:var(--pending-color); }
-
-    .break-card.fact .break-body { font-size:.95rem; line-height:1.7; color:var(--text); font-weight:300; }
+    .break-card.fact .break-body,
+    .break-card.stat .break-body { font-size:.95rem; line-height:1.7; color:var(--text); font-weight:300; }
     .break-card.quote2 .break-body { font-family:'Playfair Display',serif; font-size:1.05rem; line-height:1.65; font-style:italic; color:var(--text); }
     .break-card.quote2 .break-attr { font-size:.78rem; font-weight:600; color:var(--done-color); margin-top:.8rem; letter-spacing:.06em; }
-    .break-card.stat .stat-number { font-family:'Playfair Display',serif; font-size:3rem; font-weight:700; color:var(--pending-color); line-height:1; margin-bottom:.4rem; }
-    .break-card.stat .break-body { font-size:.88rem; line-height:1.6; color:var(--muted); }
+    .break-card.stat .stat-number { font-family:'Playfair Display',serif; font-size:2.8rem; font-weight:700; color:var(--pending-color); line-height:1; margin-bottom:.4rem; }
 
-    .break-card::after { content:''; position:absolute; right:-30px; bottom:-30px; width:120px; height:120px; border-radius:50%; opacity:.06; }
-    .fact::after { background:var(--accent); }
-    .quote2::after { background:var(--done-color); }
-    .stat::after { background:var(--pending-color); }
+    /* Break card image strip */
+    .break-img { position:relative; width:100%; height:160px; overflow:hidden; }
+    .break-img img { width:100%; height:100%; object-fit:cover; display:block; transition:transform 6s ease; }
+    .break-card:hover .break-img img { transform:scale(1.04); }
+    .break-img-caption { position:absolute; bottom:0; left:0; right:0;
+      background:linear-gradient(to top,rgba(0,0,0,.65),transparent);
+      padding:.5rem .9rem .45rem; display:flex; align-items:center; gap:.4rem; }
+    .break-img-caption svg { opacity:.7; flex-shrink:0; }
+    .break-img-caption span { font-size:.7rem; color:rgba(255,255,255,.85); letter-spacing:.04em; }
 
-    /* ── LOADING / ERROR ── */
-    #loading { text-align:center; padding:3rem; color:var(--muted); font-size:.9rem; display:flex; flex-direction:column; align-items:center; gap:1rem; }
-    .spinner { width:26px; height:26px; border-radius:50%; border:2px solid var(--glass-border); border-top-color:var(--accent); animation:spin .8s linear infinite; }
+    /* ── GALLERY SECTION ── */
+    #gallery-wrap { position:relative; z-index:10; max-width:860px; margin:0 auto; padding:0 1.5rem 5rem; }
+    #gallery-divider { display:flex; align-items:center; gap:.75rem; font-size:.68rem; font-weight:600; letter-spacing:.15em; text-transform:uppercase; color:var(--muted); margin-bottom:1.4rem; margin-top:2.5rem; }
+    #gallery-divider::after { content:''; flex:1; height:1px; background:var(--glass-border); }
+
+    #gallery-grid { columns:2; column-gap:.9rem; }
+    @media(min-width:560px){ #gallery-grid { columns:3; } }
+    @media(min-width:760px){ #gallery-grid { columns:4; } }
+
+    .gallery-card { break-inside:avoid; margin-bottom:.9rem; border-radius:12px; overflow:hidden; position:relative; opacity:0; transform:translateY(18px); transition:opacity .5s ease,transform .5s ease; cursor:pointer; }
+    .gallery-card.visible { opacity:1; transform:none; }
+    .gallery-card img { width:100%; display:block; object-fit:cover; transition:transform 5s ease; }
+    .gallery-card:hover img { transform:scale(1.06); }
+    .gallery-overlay { position:absolute; bottom:0; left:0; right:0;
+      background:linear-gradient(to top,rgba(0,0,0,.72) 0%,transparent 100%);
+      padding:.7rem .75rem .6rem; }
+    .gallery-name { font-size:.78rem; font-weight:600; color:white; line-height:1.3; }
+    .gallery-place { font-size:.65rem; color:rgba(255,255,255,.65); margin-top:.1rem; }
+    .gallery-pin { font-size:.62rem; color:var(--accent); margin-right:.2rem; }
+
+    #gallery-sentinel { height:40px; display:flex; align-items:center; justify-content:center; }
+    .gallery-loading { font-size:.75rem; color:var(--muted); letter-spacing:.08em; display:flex; align-items:center; gap:.5rem; }
+    .mini-spinner { width:14px; height:14px; border-radius:50%; border:2px solid var(--glass-border); border-top-color:var(--accent); animation:spin .7s linear infinite; }
     @keyframes spin { to{transform:rotate(360deg);} }
 
-    /* ── THEME SWITCHER ── */
+    /* ── MISC ── */
+    #loading { text-align:center; padding:3rem; color:var(--muted); font-size:.9rem; display:flex; flex-direction:column; align-items:center; gap:1rem; }
+    .spinner { width:26px; height:26px; border-radius:50%; border:2px solid var(--glass-border); border-top-color:var(--accent); animation:spin .8s linear infinite; }
     #theme-switcher { position:fixed; top:1.2rem; right:1.2rem; z-index:100; display:flex; gap:.4rem; }
     .theme-dot { width:11px; height:11px; border-radius:50%; cursor:pointer; border:2px solid transparent; transition:transform .2s,border-color .2s; }
     .theme-dot:hover,.theme-dot.active { transform:scale(1.45); border-color:white; }
-
     .fade-target { opacity:0; transform:translateY(18px); transition:opacity .6s,transform .6s; }
     .fade-target.visible { opacity:1; transform:none; }
   </style>
@@ -189,6 +182,13 @@
   </div>
 </section>
 
+<!-- Gallery lives outside #content so it can be full-max-width independently -->
+<div id="gallery-wrap">
+  <div id="gallery-divider">Around the world</div>
+  <div id="gallery-grid"></div>
+  <div id="gallery-sentinel"><div class="gallery-loading"><div class="mini-spinner"></div><span>Loading more…</span></div></div>
+</div>
+
 <script>
 // ══════════════════════════════════════════════
 //  CONFIG
@@ -207,21 +207,67 @@ const CONFIG = {
 };
 
 // ══════════════════════════════════════════════
-//  THEMES — each has colours + particle style
+//  LOCATIONS — Unsplash photo IDs + metadata
+// ══════════════════════════════════════════════
+const LOCATIONS = [
+  { id:'1506905925346-21bda4d32df4', name:'Peyto Lake',         place:'Alberta, Canada' },
+  { id:'1476514525405-8d47fcb28fe4', name:'Lauterbrunnen',      place:'Switzerland' },
+  { id:'1519681393784-d120267933ba', name:'Jungfrau Region',    place:'Swiss Alps' },
+  { id:'1532274402911-5a369e4c4bb5', name:'Maldives',           place:'Indian Ocean' },
+  { id:'1493558103817-58b2924bce98', name:'Shibuya Crossing',   place:'Tokyo, Japan' },
+  { id:'1520250497591-112f2f40a3f4', name:'Dolomites',          place:'Northern Italy' },
+  { id:'1469521669194-babb45599def', name:'Grand Canal',        place:'Venice, Italy' },
+  { id:'1501854140801-50d01698950b', name:'Patagonia',          place:'Chile' },
+  { id:'1477959858617-67f85cf4f1df', name:'Skyline at Dusk',    place:'Hong Kong' },
+  { id:'1488085061851-cd60b867f6e3', name:'Milky Way',          place:'New Zealand' },
+  { id:'1516912481800-cf26420d8dab', name:'Arctic Wilderness',  place:'Alaska, USA' },
+  { id:'1418065460487-3e41a6c84dc5', name:'Amalfi Coast',       place:'Italy' },
+  { id:'1500534314209-a25ddb2bd429', name:'Northern Lights',    place:'Iceland' },
+  { id:'1507003211169-0a1dd7228f2d', name:'Himalayan Trek',     place:'Nepal' },
+  { id:'1548013146-72479768bada',    name:'Oia Village',        place:'Santorini, Greece' },
+  { id:'1464822759023-fed622ff2c3b', name:'Aerial Landscape',   place:'Iceland' },
+  { id:'1509316785289-025f5b846b35', name:'Mountain Peaks',     place:'Canadian Rockies' },
+  { id:'1523978591478-c753949b7b4e', name:'Ski Resort',         place:'French Alps' },
+  { id:'1446329813274-4c0b46f5a072', name:'Great Wall',         place:'China' },
+  { id:'1525874684015-58fd91a50d9f', name:'Zhangjiajie',        place:'Hunan, China' },
+  { id:'1537996134247-b5de7f5ef6e1', name:'Wadi Rum',           place:'Jordan' },
+  { id:'1502082553048-f009c37129b9', name:'Tropical Shore',     place:'Thailand' },
+  { id:'1467377791767-c929b5dc9a23', name:'Safari Sunset',      place:'Serengeti, Tanzania' },
+  { id:'1470770841072-f978cf4d019e', name:'Norwegian Fjords',   place:'Norway' },
+  { id:'1512621776951-a57141f2eefd', name:'Amazon Rainforest',  place:'Brazil' },
+  { id:'1524492412-59cf98b28f37',    name:'Aurora Borealis',    place:'Finland' },
+  { id:'1551632436-cbf8dd35adfa',    name:'Fushimi Inari',      place:'Kyoto, Japan' },
+  { id:'1445962761312-eefd0b6e9a64', name:'Ha Long Bay',        place:'Vietnam' },
+  { id:'1497262693247-aa258f96c4f5', name:'Desert Dunes',       place:'Sahara, Morocco' },
+  { id:'1508193638397-1c4234db14d8', name:'Cappadocia',         place:'Turkey' },
+  { id:'1504701954957-2010ec3bcec1', name:'Golden Hour',        place:'Positano, Italy' },
+  { id:'1531761535209-8ab8c4258df3', name:'Blue Lagoon',        place:'Iceland' },
+  { id:'1570789210967-2cac24afeb00', name:'Bamboo Forest',      place:'Arashiyama, Japan' },
+  { id:'1519046904884-53103b34b206', name:'Overwater Bungalow', place:'Bora Bora' },
+  { id:'1526772662643-4b46d1d5a6e9', name:'Machu Picchu',       place:'Peru' },
+  { id:'1454391304272-2e4f7df36e25', name:'Marina Bay Sands',   place:'Singapore' },
+];
+
+function imgUrl(id, w=900, h=600) {
+  return `https://images.unsplash.com/photo-${id}?w=${w}&h=${h}&q=80&auto=format&fit=crop`;
+}
+
+// ══════════════════════════════════════════════
+//  THEMES
 // ══════════════════════════════════════════════
 const THEMES = [
-  { name:'Cosmic',   from:'#0a0a1f', mid:'#1a0a2e', to:'#0a1a2f', accent:'#7c6fff', accent2:'#ff6fb8', hue:'25deg', dur:'14s', dot:'#7c6fff', anim:'stars'   },
-  { name:'Tokyo',    from:'#0d0d0d', mid:'#1a001a', to:'#001a0d', accent:'#ff2d9b', accent2:'#00fff7', hue:'15deg', dur:'10s', dot:'#ff2d9b', anim:'rain'    },
-  { name:'Ocean',    from:'#020d1a', mid:'#04254a', to:'#041a3a', accent:'#00b4ff', accent2:'#00ffd0', hue:'30deg', dur:'16s', dot:'#00b4ff', anim:'orbs'    },
-  { name:'Ember',    from:'#150500', mid:'#2d0f00', to:'#1a0500', accent:'#ff6a00', accent2:'#ffca28', hue:'10deg', dur:'12s', dot:'#ff6a00', anim:'embers'  },
-  { name:'Forest',   from:'#030f08', mid:'#0a2412', to:'#040d0b', accent:'#4cff91', accent2:'#aaff44', hue:'20deg', dur:'18s', dot:'#4cff91', anim:'stars'   },
-  { name:'Aurora',   from:'#030d18', mid:'#062c26', to:'#0d0318', accent:'#00ffc8', accent2:'#c87fff', hue:'35deg', dur:'20s', dot:'#00ffc8', anim:'orbs'    },
-  { name:'Sakura',   from:'#1a0012', mid:'#2e0a20', to:'#1a0018', accent:'#ff8fc8', accent2:'#ffc1e3', hue:'12deg', dur:'15s', dot:'#ff8fc8', anim:'petals'  },
-  { name:'Obsidian', from:'#080808', mid:'#111111', to:'#0a0a0a', accent:'#e0e0e0', accent2:'#aaaaaa', hue:'5deg',  dur:'22s', dot:'#e0e0e0', anim:'stars'   },
+  { name:'Cosmic',   from:'#0a0a1f', mid:'#1a0a2e', to:'#0a1a2f', accent:'#7c6fff', accent2:'#ff6fb8', hue:'25deg', dur:'14s', dot:'#7c6fff', anim:'stars'  },
+  { name:'Tokyo',    from:'#0d0d0d', mid:'#1a001a', to:'#001a0d', accent:'#ff2d9b', accent2:'#00fff7', hue:'15deg', dur:'10s', dot:'#ff2d9b', anim:'rain'   },
+  { name:'Ocean',    from:'#020d1a', mid:'#04254a', to:'#041a3a', accent:'#00b4ff', accent2:'#00ffd0', hue:'30deg', dur:'16s', dot:'#00b4ff', anim:'orbs'   },
+  { name:'Ember',    from:'#150500', mid:'#2d0f00', to:'#1a0500', accent:'#ff6a00', accent2:'#ffca28', hue:'10deg', dur:'12s', dot:'#ff6a00', anim:'embers' },
+  { name:'Forest',   from:'#030f08', mid:'#0a2412', to:'#040d0b', accent:'#4cff91', accent2:'#aaff44', hue:'20deg', dur:'18s', dot:'#4cff91', anim:'stars'  },
+  { name:'Aurora',   from:'#030d18', mid:'#062c26', to:'#0d0318', accent:'#00ffc8', accent2:'#c87fff', hue:'35deg', dur:'20s', dot:'#00ffc8', anim:'orbs'   },
+  { name:'Sakura',   from:'#1a0012', mid:'#2e0a20', to:'#1a0018', accent:'#ff8fc8', accent2:'#ffc1e3', hue:'12deg', dur:'15s', dot:'#ff8fc8', anim:'petals' },
+  { name:'Obsidian', from:'#080808', mid:'#111111', to:'#0a0a0a', accent:'#e0e0e0', accent2:'#aaaaaa', hue:'5deg',  dur:'22s', dot:'#e0e0e0', anim:'stars'  },
 ];
 
 // ══════════════════════════════════════════════
-//  HERO QUOTES
+//  QUOTES
 // ══════════════════════════════════════════════
 const QUOTES = [
   { q:"Design is not just what it looks like. Design is how it works.", a:"Steve Jobs" },
@@ -237,58 +283,53 @@ const QUOTES = [
   { q:"You can't connect the dots looking forward; you can only connect them looking backward.", a:"Steve Jobs" },
   { q:"Chase the vision, not the money; the money will end up following you.", a:"Tony Hsieh" },
   { q:"Your most unhappy customers are your greatest source of learning.", a:"Bill Gates" },
-  { q:"It's not about ideas. It's about making ideas happen.", a:"Scott Belsky" },
   { q:"Ships that stay in harbor are safe, but that's not what ships are for.", a:"John A. Shedd" },
-  { q:"Innovation distinguishes between a leader and a follower.", a:"Steve Jobs" },
-  { q:"The way to get started is to quit talking and begin doing.", a:"Walt Disney" },
   { q:"Stay hungry, stay foolish.", a:"Steve Jobs" },
-  { q:"Small progress is still progress.", a:"Unknown" },
   { q:"Every great developer you know got there by solving problems they were unqualified to solve.", a:"Patrick McKenzie" },
+  { q:"The way to get started is to quit talking and begin doing.", a:"Walt Disney" },
+  { q:"Small progress is still progress.", a:"Unknown" },
 ];
 
 // ══════════════════════════════════════════════
-//  BREAK CARDS — inserted between log entries
+//  BREAK CARDS
 // ══════════════════════════════════════════════
 const BREAKS = [
-  { type:'stat', number:'2B+', body:'WhatsApp users worldwide — making it the most-used messaging app on the planet.' },
-  { type:'stat', number:'90%', body:'of Singaporeans use WhatsApp regularly, one of the highest adoption rates in Southeast Asia.' },
-  { type:'stat', number:'$27B', body:'projected global chatbot market size by 2030, growing at 23% per year.' },
-  { type:'stat', number:'200M+', body:'businesses actively use WhatsApp Business every month to connect with customers.' },
-  { type:'stat', number:'80%', body:'of routine customer queries can be handled by AI chatbots without human intervention.' },
-  { type:'stat', number:'33%', body:'cheaper — the average cost saving of handling customer service via messaging vs phone.' },
-  { type:'stat', number:'64%', body:'of people prefer messaging a business over calling them, across all age groups.' },
+  { type:'stat', number:'2B+', body:'WhatsApp users worldwide — the most-used messaging app on the planet.' },
+  { type:'stat', number:'90%', body:'of Singaporeans use WhatsApp regularly — one of the highest rates in Southeast Asia.' },
+  { type:'stat', number:'$27B', body:'projected global chatbot market by 2030, growing at 23% per year.' },
+  { type:'stat', number:'200M+', body:'businesses actively use WhatsApp Business every month.' },
+  { type:'stat', number:'80%', body:'of routine customer queries can be handled by AI without human intervention.' },
+  { type:'stat', number:'33%', body:'cheaper — the average saving of customer service via messaging vs phone.' },
+  { type:'stat', number:'64%', body:'of people prefer messaging a business over calling them.' },
   { type:'stat', number:'99%', body:'of Singapore businesses are SMEs — the exact market SGReply is built for.' },
   { type:'fact', body:'🤖 The first chatbot, ELIZA, was created at MIT in 1966 — nearly 60 years before ChatGPT made AI mainstream.' },
   { type:'fact', body:'📱 WhatsApp was acquired by Facebook for $19 billion in 2014 — at the time, the largest acquisition of a venture-backed startup ever.' },
   { type:'fact', body:'🇸🇬 Singapore\'s digital economy contributes approximately 17% of GDP, one of the highest shares in Asia.' },
-  { type:'fact', body:'⚡ The average person checks their phone 96 times a day — about once every 10 minutes. For customer enquiries, that means fast replies win.' },
-  { type:'fact', body:'📊 53% of customers say they are more likely to shop with a business they can message directly. Response time is a competitive advantage.' },
-  { type:'fact', body:'🏆 Singapore ranks consistently in the top 5 globally for digital infrastructure, broadband speed, and tech-readiness — a strong foundation for AI tools.' },
-  { type:'fact', body:'💬 Businesses that respond to enquiries within 5 minutes are 100× more likely to qualify a lead than those that wait 30 minutes.' },
-  { type:'quote2', q:"The customer is not a moron. She is your wife.", a:"David Ogilvy" },
+  { type:'fact', body:'⚡ The average person checks their phone 96 times a day. For customer enquiries, fast replies win.' },
+  { type:'fact', body:'📊 53% of customers say they\'re more likely to shop with a business they can message directly.' },
+  { type:'fact', body:'💬 Businesses that respond within 5 minutes are 100× more likely to qualify a lead than those that wait 30 minutes.' },
   { type:'quote2', q:"Get closer than ever to your customers. So close that you tell them what they need well before they realise it themselves.", a:"Steve Jobs" },
   { type:'quote2', q:"Your brand is what people say about you when you're not in the room.", a:"Jeff Bezos" },
-  { type:'quote2', q:"We see our customers as invited guests to a party, and we are the hosts.", a:"Jeff Bezos" },
   { type:'quote2', q:"The goal of a company is to make something people want to buy — not to make money.", a:"Paul Graham" },
-  { type:'quote2', q:"A small group of committed citizens can change the world. Indeed, it's the only thing that ever has.", a:"Margaret Mead" },
   { type:'quote2', q:"The best marketing doesn't feel like marketing.", a:"Tom Fishburne" },
+  { type:'quote2', q:"We see our customers as invited guests to a party, and we are the hosts.", a:"Jeff Bezos" },
 ];
 
 // ══════════════════════════════════════════════
-//  THEME — always random on each page load
+//  THEME
 // ══════════════════════════════════════════════
 const currentThemeIdx = Math.floor(Math.random() * THEMES.length);
 
 function applyTheme(idx) {
   const t = THEMES[idx];
   const r = document.documentElement.style;
-  r.setProperty('--accent',   t.accent);
-  r.setProperty('--accent2',  t.accent2);
-  r.setProperty('--bg-from',  t.from);
-  r.setProperty('--bg-mid',   t.mid);
-  r.setProperty('--bg-to',    t.to);
-  r.setProperty('--bg-hue',   t.hue);
-  r.setProperty('--bg-dur',   t.dur);
+  r.setProperty('--accent',  t.accent);
+  r.setProperty('--accent2', t.accent2);
+  r.setProperty('--bg-from', t.from);
+  r.setProperty('--bg-mid',  t.mid);
+  r.setProperty('--bg-to',   t.to);
+  r.setProperty('--bg-hue',  t.hue);
+  r.setProperty('--bg-dur',  t.dur);
   document.querySelectorAll('.theme-dot').forEach((d,i) => d.classList.toggle('active', i === idx));
   respawnParticles(t.anim, t.accent, t.accent2);
 }
@@ -297,10 +338,8 @@ function buildThemeSwitcher() {
   const sw = document.getElementById('theme-switcher');
   THEMES.forEach((t,i) => {
     const d = document.createElement('div');
-    d.className = 'theme-dot';
-    d.title = t.name;
-    d.style.background = t.dot;
-    d.onclick = (e) => { e.stopPropagation(); applyTheme(i); };
+    d.className = 'theme-dot'; d.title = t.name; d.style.background = t.dot;
+    d.onclick = e => { e.stopPropagation(); applyTheme(i); };
     sw.appendChild(d);
   });
 }
@@ -308,228 +347,246 @@ function buildThemeSwitcher() {
 // ══════════════════════════════════════════════
 //  PARTICLES
 // ══════════════════════════════════════════════
-function clearParticles() {
-  document.querySelectorAll('[class^="p-"]').forEach(el => el.remove());
+function clearParticles() { document.querySelectorAll('[class^="p-"]').forEach(el=>el.remove()); }
+function rand(a,b) { return Math.random()*(b-a)+a; }
+
+function makeStars(n=80) {
+  for (let i=0;i<n;i++){const el=document.createElement('div');el.className='p-star';const s=rand(.5,2.8);el.style.cssText=`width:${s}px;height:${s}px;left:${rand(0,100)}vw;top:${rand(0,100)}vh;--dur:${rand(2,5).toFixed(1)}s;--op:${rand(.2,.75).toFixed(2)};animation-delay:${rand(0,5).toFixed(1)}s;`;document.body.appendChild(el);}
 }
-
-function rand(min, max) { return Math.random() * (max - min) + min; }
-
-function makeStars(n=80, c1, c2) {
-  for (let i=0;i<n;i++) {
-    const el = document.createElement('div');
-    el.className = 'p-star';
-    const size = rand(.5,2.8);
-    el.style.cssText = `width:${size}px;height:${size}px;left:${rand(0,100)}vw;top:${rand(0,100)}vh;--dur:${rand(2,5).toFixed(1)}s;--op:${rand(.2,.75).toFixed(2)};animation-delay:${rand(0,5).toFixed(1)}s;`;
-    document.body.appendChild(el);
-  }
+function makeEmbers(n=60,c1,c2) {
+  const cols=[c1,c2,'#fff8dc','#ffd700'];
+  for(let i=0;i<n;i++){const el=document.createElement('div');el.className='p-ember';const s=rand(2,6);el.style.cssText=`width:${s}px;height:${s}px;left:${rand(0,100)}vw;bottom:${rand(-10,30)}vh;background:${cols[i%4]};--dur:${rand(4,10).toFixed(1)}s;--op:${rand(.4,.8).toFixed(2)};--drift:${rand(-40,40).toFixed(0)}px;animation-delay:${rand(0,8).toFixed(1)}s;border-radius:50%;`;document.body.appendChild(el);}
 }
-
-function makeEmbers(n=60, c1, c2) {
-  const colors = [c1, c2, '#fff8dc', '#ffd700'];
-  for (let i=0;i<n;i++) {
-    const el = document.createElement('div');
-    el.className = 'p-ember';
-    const size = rand(2,6);
-    el.style.cssText = `width:${size}px;height:${size}px;left:${rand(0,100)}vw;bottom:${rand(-10,30)}vh;background:${colors[Math.floor(Math.random()*colors.length)]};--dur:${rand(4,10).toFixed(1)}s;--op:${rand(.4,.8).toFixed(2)};--drift:${rand(-40,40).toFixed(0)}px;animation-delay:${rand(0,8).toFixed(1)}s;border-radius:50%;`;
-    document.body.appendChild(el);
-  }
+function makePetals(n=40,c1,c2) {
+  const cols=[c1,c2,'rgba(255,200,220,.8)','rgba(255,230,240,.6)'];
+  for(let i=0;i<n;i++){const el=document.createElement('div');el.className='p-petal';const s=rand(6,16);el.style.cssText=`width:${s}px;height:${s*rand(.6,1)}px;left:${rand(-5,105)}vw;top:${rand(-20,0)}vh;background:${cols[i%4]};--dur:${rand(6,14).toFixed(1)}s;--op:${rand(.3,.7).toFixed(2)};--drift:${rand(-60,60).toFixed(0)}px;animation-delay:${rand(0,12).toFixed(1)}s;opacity:0;`;document.body.appendChild(el);}
 }
-
-function makePetals(n=40, c1, c2) {
-  const colors = [c1, c2, 'rgba(255,200,220,.8)', 'rgba(255,230,240,.6)'];
-  for (let i=0;i<n;i++) {
-    const el = document.createElement('div');
-    el.className = 'p-petal';
-    const size = rand(6,16);
-    el.style.cssText = `width:${size}px;height:${size * rand(.6,1)}px;left:${rand(-5,105)}vw;top:${rand(-20,0)}vh;background:${colors[Math.floor(Math.random()*colors.length)]};--dur:${rand(6,14).toFixed(1)}s;--op:${rand(.3,.7).toFixed(2)};--drift:${rand(-60,60).toFixed(0)}px;animation-delay:${rand(0,12).toFixed(1)}s;opacity:0;`;
-    document.body.appendChild(el);
-  }
+function makeRain(n=80,c1) {
+  for(let i=0;i<n;i++){const el=document.createElement('div');el.className='p-rain';const h=rand(40,140);el.style.cssText=`height:${h}px;left:${rand(0,100)}vw;top:${rand(-30,0)}vh;--rain-color:${c1};--dur:${rand(.8,2).toFixed(2)}s;animation-delay:${rand(0,3).toFixed(2)}s;opacity:0;`;document.body.appendChild(el);}
 }
-
-function makeRain(n=80, c1, c2) {
-  for (let i=0;i<n;i++) {
-    const el = document.createElement('div');
-    el.className = 'p-rain';
-    const h = rand(40,140);
-    el.style.cssText = `height:${h}px;left:${rand(0,100)}vw;top:${rand(-30,0)}vh;--rain-color:${c1};--dur:${rand(.8,2).toFixed(2)}s;animation-delay:${rand(0,3).toFixed(2)}s;opacity:0;`;
-    document.body.appendChild(el);
-  }
+function makeOrbs(n=8,c1,c2) {
+  for(let i=0;i<n;i++){const el=document.createElement('div');el.className='p-orb';const s=rand(150,350);el.style.cssText=`width:${s}px;height:${s}px;left:${rand(0,80)}vw;top:${rand(0,80)}vh;background:${i%2?c2:c1};--dur:${rand(14,28).toFixed(0)}s;--op:${rand(.08,.18).toFixed(2)};--dx:${rand(-80,80).toFixed(0)}px;--dy:${rand(-60,60).toFixed(0)}px;--dx2:${rand(-50,50).toFixed(0)}px;--dy2:${rand(-80,80).toFixed(0)}px;animation-delay:${rand(0,10).toFixed(1)}s;`;document.body.appendChild(el);}
 }
-
-function makeOrbs(n=8, c1, c2) {
-  const colors = [c1, c2];
-  for (let i=0;i<n;i++) {
-    const el = document.createElement('div');
-    el.className = 'p-orb';
-    const size = rand(150,350);
-    el.style.cssText = `width:${size}px;height:${size}px;left:${rand(0,80)}vw;top:${rand(0,80)}vh;background:${colors[i%2]};--dur:${rand(14,28).toFixed(0)}s;--op:${rand(.08,.18).toFixed(2)};--dx:${rand(-80,80).toFixed(0)}px;--dy:${rand(-60,60).toFixed(0)}px;--dx2:${rand(-50,50).toFixed(0)}px;--dy2:${rand(-80,80).toFixed(0)}px;animation-delay:${rand(0,10).toFixed(1)}s;`;
-    document.body.appendChild(el);
-  }
-}
-
-function respawnParticles(anim, c1, c2) {
+function respawnParticles(anim,c1,c2) {
   clearParticles();
-  if (anim==='stars')  makeStars(90, c1, c2);
-  if (anim==='embers') makeEmbers(55, c1, c2);
-  if (anim==='petals') makePetals(45, c1, c2);
-  if (anim==='rain')   makeRain(75, c1, c2);
-  if (anim==='orbs')   { makeOrbs(8, c1, c2); makeStars(30, c1, c2); }
+  if(anim==='stars')  makeStars(90);
+  if(anim==='embers') makeEmbers(55,c1,c2);
+  if(anim==='petals') makePetals(45,c1,c2);
+  if(anim==='rain')   makeRain(75,c1);
+  if(anim==='orbs')   { makeOrbs(8,c1,c2); makeStars(30); }
 }
 
 // ══════════════════════════════════════════════
 //  QUOTE + MISSION
 // ══════════════════════════════════════════════
 function setQuote() {
-  const q = QUOTES[Math.floor(Math.random()*QUOTES.length)];
-  document.getElementById('quote-text').textContent = q.q;
-  document.getElementById('quote-author').textContent = '— ' + q.a;
+  const q=QUOTES[Math.floor(Math.random()*QUOTES.length)];
+  document.getElementById('quote-text').textContent=q.q;
+  document.getElementById('quote-author').textContent='— '+q.a;
 }
-
 function buildMission() {
-  document.getElementById('mission-text').textContent = CONFIG.mission;
-  const c = document.getElementById('milestones');
-  CONFIG.milestones.forEach(m => {
-    const row = document.createElement('div');
-    row.className = 'milestone-row';
-    row.innerHTML = `<span class="milestone-name">${m.name}</span><div class="bar-track"><div class="bar-fill" data-pct="${m.pct}"></div></div><span class="milestone-pct">${m.pct}%</span>`;
+  document.getElementById('mission-text').textContent=CONFIG.mission;
+  const c=document.getElementById('milestones');
+  CONFIG.milestones.forEach(m=>{
+    const row=document.createElement('div');row.className='milestone-row';
+    row.innerHTML=`<span class="milestone-name">${m.name}</span><div class="bar-track"><div class="bar-fill" data-pct="${m.pct}"></div></div><span class="milestone-pct">${m.pct}%</span>`;
     c.appendChild(row);
   });
 }
-
-function animateBars() {
-  document.querySelectorAll('.bar-fill').forEach(b => setTimeout(()=>{ b.style.width=b.dataset.pct+'%'; },200));
-}
+function animateBars() { document.querySelectorAll('.bar-fill').forEach(b=>setTimeout(()=>b.style.width=b.dataset.pct+'%',200)); }
 
 // ══════════════════════════════════════════════
 //  PARSE SESSION LOG
 // ══════════════════════════════════════════════
 function parseSessionLog(md) {
-  return md.split(/\n---\n/)
-    .filter(s => /^##\s/m.test(s))
-    .map(entry => {
-      const lines = entry.trim().split('\n');
-      const heading = (lines.find(l=>/^##\s/.test(l))||'').replace(/^##\s*/,'').trim();
-      const date = (heading.match(/(\d{4}-\d{2}-\d{2})/)||['',''])[1];
-      const subtitle = heading.replace(/^[\d/\s–—-]+/,'').replace(/^[—–-]\s*/,'').trim();
-      return { date, subtitle, doneItems:extractItems(entry,'Done'), pendingItems:extractItems(entry,'Pending') };
-    });
+  return md.split(/\n---\n/).filter(s=>/^##\s/m.test(s)).map(entry=>{
+    const heading=(entry.trim().split('\n').find(l=>/^##\s/.test(l))||'').replace(/^##\s*/,'').trim();
+    const date=(heading.match(/(\d{4}-\d{2}-\d{2})/)||['',''])[1];
+    const subtitle=heading.replace(/^[\d/\s–—-]+/,'').replace(/^[—–-]\s*/,'').trim();
+    return { date, subtitle, doneItems:extractItems(entry,'Done'), pendingItems:extractItems(entry,'Pending') };
+  });
 }
-
-function extractItems(section, heading) {
-  const m = section.match(new RegExp(`###\\s*${heading}\\s*\\n([\\s\\S]*?)(?=###|$)`,'i'));
-  if (!m) return [];
+function extractItems(section,heading) {
+  const m=section.match(new RegExp(`###\\s*${heading}\\s*\\n([\\s\\S]*?)(?=###|$)`,'i'));
+  if(!m)return[];
   return m[1].split('\n').filter(l=>l.trim().startsWith('-')).map(l=>{
-    const text = l.replace(/^-\s*/,'').trim();
-    const crossed = /~~.*~~/.test(text);
-    const clean = text.replace(/~~(.*?)~~/g,'$1').replace(/✅.*$/,'').replace(/\*\*(.*?)\*\*/g,'$1').trim();
-    return { text:clean, crossed };
+    const text=l.replace(/^-\s*/,'').trim();
+    const crossed=/~~.*~~/.test(text);
+    const clean=text.replace(/~~(.*?)~~/g,'$1').replace(/✅.*$/,'').replace(/\*\*(.*?)\*\*/g,'$1').trim();
+    return {text:clean,crossed};
   });
 }
 
 // ══════════════════════════════════════════════
-//  RENDER — session cards + break cards interleaved
+//  BREAK CARDS (with optional location image)
 // ══════════════════════════════════════════════
-function buildBreakCard(item) {
-  const el = document.createElement('div');
-  el.className = `break-card ${item.type}`;
-  if (item.type==='stat') {
-    el.innerHTML = `<div class="break-label">✦ By the numbers</div><div class="stat-number">${item.number}</div><div class="break-body">${item.body}</div>`;
-  } else if (item.type==='quote2') {
-    el.innerHTML = `<div class="break-label">✦ Worth remembering</div><div class="break-body">${item.q}</div><div class="break-attr">— ${item.a}</div>`;
-  } else {
-    el.innerHTML = `<div class="break-label">✦ Did you know?</div><div class="break-body">${item.body}</div>`;
+let breakLocationIdx = 0;
+const shuffledLocations = [...LOCATIONS].sort(()=>Math.random()-.5);
+
+function buildBreakCard(item, withImage) {
+  const el=document.createElement('div');
+  el.className=`break-card ${item.type}`;
+
+  // Optional location image strip (on fact and stat cards only)
+  if (withImage && item.type !== 'quote2') {
+    const loc = shuffledLocations[breakLocationIdx % shuffledLocations.length];
+    breakLocationIdx++;
+    const strip = document.createElement('div');
+    strip.className = 'break-img';
+    strip.innerHTML = `
+      <img src="${imgUrl(loc.id, 900, 320)}" alt="${loc.name}" loading="lazy" onerror="this.parentElement.style.display='none'">
+      <div class="break-img-caption">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+        <span>${loc.name} · ${loc.place}</span>
+      </div>`;
+    el.appendChild(strip);
   }
+
+  const inner = document.createElement('div');
+  inner.className = 'break-inner';
+
+  if (item.type==='stat') {
+    inner.innerHTML=`<div class="break-label">✦ By the numbers</div><div class="stat-number">${item.number}</div><div class="break-body">${item.body}</div>`;
+  } else if (item.type==='quote2') {
+    inner.innerHTML=`<div class="break-label">✦ Worth remembering</div><div class="break-body">${item.q}</div><div class="break-attr">— ${item.a}</div>`;
+  } else {
+    inner.innerHTML=`<div class="break-label">✦ Did you know?</div><div class="break-body">${item.body}</div>`;
+  }
+  el.appendChild(inner);
   return el;
 }
 
 function shuffleArray(arr) {
-  const a = [...arr];
-  for (let i=a.length-1;i>0;i--) { const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; }
+  const a=[...arr];
+  for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}
   return a;
 }
 
+// ══════════════════════════════════════════════
+//  RENDER SESSION CARDS
+// ══════════════════════════════════════════════
 function renderCards(entries) {
-  const container = document.getElementById('log-container');
-  container.innerHTML = '';
-  if (!entries.length) { container.innerHTML='<p style="color:var(--muted);text-align:center;padding:2rem">No entries found.</p>'; return; }
-
-  // Pre-shuffle breaks so order is different each load
-  const breaks = shuffleArray(BREAKS);
-  let breakIdx = 0;
-
-  entries.forEach((e, i) => {
-    // Session card
-    const card = document.createElement('div');
-    card.className = 'session-card';
-    card.style.transitionDelay = `${i*70}ms`;
-    const doneHtml = e.doneItems.map(it=>`<div class="item${it.crossed?' crossed':''}"><span class="item-dot"></span><span>${it.text}</span></div>`).join('');
-    const pendHtml = e.pendingItems.map(it=>`<div class="item${it.crossed?' crossed':''}"><span class="item-dot"></span><span>${it.text}</span></div>`).join('');
-    card.innerHTML = `
-      <div class="card-date">${formatDate(e.date)}</div>
-      <div class="card-title">${e.subtitle||'Session'}</div>
-      <div class="items-col">
-        <div class="items-group done"><h4>✓ Done</h4>${doneHtml||'<div class="item"><span class="item-dot"></span><span style="opacity:.3">—</span></div>'}</div>
-        <div class="items-group pending"><h4>→ Pending</h4>${pendHtml||'<div class="item"><span class="item-dot"></span><span style="opacity:.3">—</span></div>'}</div>
-      </div>`;
+  const container=document.getElementById('log-container');
+  container.innerHTML='';
+  if(!entries.length){container.innerHTML='<p style="color:var(--muted);text-align:center;padding:2rem">No entries found.</p>';return;}
+  const breaks=shuffleArray(BREAKS);
+  let bi=0;
+  entries.forEach((e,i)=>{
+    const card=document.createElement('div');card.className='session-card';card.style.transitionDelay=`${i*70}ms`;
+    const dH=e.doneItems.map(it=>`<div class="item${it.crossed?' crossed':''}"><span class="item-dot"></span><span>${it.text}</span></div>`).join('');
+    const pH=e.pendingItems.map(it=>`<div class="item${it.crossed?' crossed':''}"><span class="item-dot"></span><span>${it.text}</span></div>`).join('');
+    card.innerHTML=`<div class="card-date">${formatDate(e.date)}</div><div class="card-title">${e.subtitle||'Session'}</div><div class="items-col"><div class="items-group done"><h4>✓ Done</h4>${dH||'<div class="item"><span class="item-dot"></span><span style="opacity:.3">—</span></div>'}</div><div class="items-group pending"><h4>→ Pending</h4>${pH||'<div class="item"><span class="item-dot"></span><span style="opacity:.3">—</span></div>'}</div></div>`;
     container.appendChild(card);
 
-    // Insert a break card after every 2 session entries (not after the last one)
-    if ((i+1) % 2 === 0 && i < entries.length-1) {
-      const bc = buildBreakCard(breaks[breakIdx % breaks.length]);
-      bc.style.transitionDelay = `${(i+0.5)*70}ms`;
+    // Insert break card every 2 session entries
+    if ((i+1)%2===0 && i<entries.length-1) {
+      const withImg = (bi%2===0); // every other break card gets an image
+      const bc=buildBreakCard(breaks[bi%breaks.length], withImg);
+      bc.style.transitionDelay=`${(i+.5)*70}ms`;
       container.appendChild(bc);
-      breakIdx++;
+      bi++;
     }
   });
 
-  // Intersection observer fade-in for all cards
-  const obs = new IntersectionObserver(entries => {
-    entries.forEach(e => { if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);} });
-  }, {threshold:.08});
-  document.querySelectorAll('.session-card,.break-card').forEach(c=>obs.observe(c));
+  observeCards();
 }
 
 function formatDate(d) {
-  if (!d) return '';
-  try { return new Date(d+'T12:00:00').toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'long',year:'numeric'}); }
-  catch { return d; }
+  if(!d)return'';
+  try{return new Date(d+'T12:00:00').toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'long',year:'numeric'});}
+  catch{return d;}
+}
+
+// ══════════════════════════════════════════════
+//  INFINITE GALLERY
+// ══════════════════════════════════════════════
+const galleryLocations = shuffleArray(LOCATIONS);
+let galleryIdx = 0;
+let galleryObserver = null;
+
+function buildGalleryCard(loc) {
+  const card = document.createElement('div');
+  card.className = 'gallery-card';
+  // Random aspect ratio for visual masonry variety
+  const heights = [200, 240, 180, 260, 210, 230];
+  const h = heights[Math.floor(Math.random()*heights.length)];
+  card.innerHTML = `
+    <img src="${imgUrl(loc.id, 600, h)}" alt="${loc.name}" loading="lazy" height="${h}"
+         onerror="this.closest('.gallery-card').style.display='none'">
+    <div class="gallery-overlay">
+      <div class="gallery-name"><span class="gallery-pin">📍</span>${loc.name}</div>
+      <div class="gallery-place">${loc.place}</div>
+    </div>`;
+  return card;
+}
+
+function addGalleryBatch(n=6) {
+  const grid = document.getElementById('gallery-grid');
+  const obs = new IntersectionObserver(es=>{
+    es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});
+  },{threshold:.05});
+
+  for (let i=0;i<n;i++) {
+    const loc = galleryLocations[galleryIdx % galleryLocations.length];
+    galleryIdx++;
+    // Re-shuffle when we've gone through all once
+    if (galleryIdx % galleryLocations.length === 0) shuffleArray(galleryLocations);
+    const card = buildGalleryCard(loc);
+    card.style.transitionDelay = `${(i%3)*80}ms`;
+    grid.appendChild(card);
+    obs.observe(card);
+  }
+}
+
+function initGallery() {
+  addGalleryBatch(9); // initial batch
+  const sentinel = document.getElementById('gallery-sentinel');
+  galleryObserver = new IntersectionObserver(es=>{
+    if (es[0].isIntersecting) addGalleryBatch(6);
+  }, {rootMargin:'200px'});
+  galleryObserver.observe(sentinel);
+}
+
+// ══════════════════════════════════════════════
+//  INTERSECTION OBSERVERS
+// ══════════════════════════════════════════════
+function observeCards() {
+  const obs=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});},{threshold:.08});
+  document.querySelectorAll('.session-card,.break-card').forEach(c=>obs.observe(c));
+}
+function observeFadeTargets() {
+  const obs=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});},{threshold:.12});
+  document.querySelectorAll('.fade-target').forEach(el=>obs.observe(el));
 }
 
 // ══════════════════════════════════════════════
 //  FETCH
 // ══════════════════════════════════════════════
 async function fetchLog() {
-  const url = `https://raw.githubusercontent.com/${CONFIG.githubOwner}/${CONFIG.githubRepo}/${CONFIG.githubBranch}/${CONFIG.logPath}`;
+  const url=`https://raw.githubusercontent.com/${CONFIG.githubOwner}/${CONFIG.githubRepo}/${CONFIG.githubBranch}/${CONFIG.logPath}`;
   try {
-    const res = await fetch(url);
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const res=await fetch(url);
+    if(!res.ok)throw new Error(`HTTP ${res.status}`);
     renderCards(parseSessionLog(await res.text()));
     animateBars();
   } catch(err) {
-    document.getElementById('log-container').innerHTML = `<div style="text-align:center;padding:2rem;color:var(--pending-color)"><p>Could not fetch session log.</p><p style="font-size:.78rem;opacity:.5;margin-top:.4rem">${err.message}</p></div>`;
+    document.getElementById('log-container').innerHTML=`<div style="text-align:center;padding:2rem;color:var(--pending-color)"><p>Could not fetch session log.</p><p style="font-size:.78rem;opacity:.5;margin-top:.4rem">${err.message}</p></div>`;
     animateBars();
   }
 }
 
-// ══════════════════════════════════════════════
-//  HELPERS
-// ══════════════════════════════════════════════
 function scrollToContent() { document.getElementById('content').scrollIntoView({behavior:'smooth'}); }
-
-function observeFadeTargets() {
-  const obs = new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});},{threshold:.12});
-  document.querySelectorAll('.fade-target').forEach(el=>obs.observe(el));
-}
 
 // ══════════════════════════════════════════════
 //  INIT
 // ══════════════════════════════════════════════
 buildThemeSwitcher();
-applyTheme(currentThemeIdx);   // always random — no localStorage
+applyTheme(currentThemeIdx);
 setQuote();
 buildMission();
 observeFadeTargets();
 fetchLog();
+initGallery();
 </script>
 </body>
 </html>
