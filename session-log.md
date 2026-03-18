@@ -3,6 +3,50 @@ _Most recent session at the top. Updated at the end of each working session._
 
 ---
 
+## 2026-03-18 — 4-agent content pipeline, learn SEO, brand consistency
+
+### Done
+- Built 4-agent headless content pipeline (research → writer → reviewer → publisher) using `claude -p` subprocesses; `claude-runner.js` resolves binary from VS Code/Cursor extension dirs
+- Generated and published first 2 articles: PSG grant WhatsApp automation + Instagram DM for blogshop sellers
+- Fixed Eleventy `learn/` setup: collection glob, passthrough copy paths, pathPrefix, `| url` filter on all links, strip-visuals transform
+- Fixed learn sitemap URLs (now `/learn/slug/` not `/slug/`); added second `Sitemap:` line in robots.txt; removed manual article entries from main sitemap
+- Added keywords meta, BreadcrumbList JSON-LD, FAQPage JSON-LD to `article.njk`; `faq_schema` flows from writer agent → frontmatter YAML → structured data
+- Replaced "SGReply" → "SG Reply" in all external-facing display text: learn templates, article .md files, all 5 agent prompts, client/src Landing/Login/Demo/PublicFooter/ChatPanel/Settings components; URLs and #SGReply hashtag preserved
+
+### Pending
+- Build `client/dist` and deploy to Railway with brand name + article changes live
+- Run `/content` pipeline for article 3 (next theme rotation)
+- Submit `https://sgreply.com/learn/sitemap.xml` to Google Search Console as additional sitemap
+- Monitor Google indexing of `/learn/psg-grant-*/` and `/learn/instagram-dm-*/`
+- Check Eleventy build output on Railway to confirm `_site/sitemap.xml` generates correctly
+
+---
+
+## 2026-03-17 — KB progress bar, verified facts, templates, MCP setup, auth & deploy fixes
+
+### Done
+- Added `client_facts` table (migration 008), `/api/facts` CRUD routes, and injected verified facts as a high-priority "VERIFIED FACTS" block in the AI system prompt — prevents hallucination of prices, links, addresses
+- KnowledgeBase dashboard rebuilt with tabs (Response Gaps / Verified Facts / Change History), storage progress bar, template download link, and connected sources section; Advanced Settings collapsible wraps the facts editor
+- Created `client/public/templates/knowledge-base-template.txt` — downloadable KB template for onboarding users
+- Onboarding step 3 updated: per-file size limit display, template download link, file count + KB total progress bar (total size validation removed — backend enforces text limit)
+- Fixed Railway build chain: `railway.toml` eleventy step was aborting the client build; fixed `npm run build` script and build command so `client/dist` is always generated
+- Diagnosed and fixed `waba_id` column missing error — migration 002 instructions provided for Railway Postgres console; also flagged migrations 007 (kb undo) and 008 (client facts) as pending
+- Google OAuth "invalid_request" diagnosed — OAuth app in Testing mode blocking second accounts; advised publishing via Google Cloud Console (all required fields + privacy policy URL needed)
+- Supabase email verification link whitelabelled — Supabase email template updated to point to `sgreply.com/auth/confirm?token_hash=...`; AuthCallback handles token exchange
+- Postgres MCP server configured in `~/.claude/settings.json` for direct Railway DB access in future sessions
+
+### Pending
+- Run migration 002 (waba_id columns), 007 (kb_edit_log raw_text_before), 008 (client_facts) on Railway Postgres console
+- Restart VS Code again to activate postgres MCP server (settings.json was updated this session)
+- Publish Google OAuth app — fill all required fields in OAuth consent screen then publish to allow any Google account to sign in
+- Evolution API personal WhatsApp not receiving messages — `evolution_connections` table is empty despite QR scan; root cause not yet fully diagnosed (migration 011 may not have run)
+- widget.js: replace purple circle with pill "Support" button flushed to screen bottom
+- KB editor `findSection` still returns wrong paragraph for PDF documents — position-based keyword clustering fix was planned but not yet implemented
+- KB undo feature (migration 007) implemented in code but not yet deployed/tested end-to-end
+- `client_quick_actions` cache not cleared on document upload/delete — stale buttons served after KB swap
+
+---
+
 ## 2026-03-12 — Frontend migrated to Railway, devlog photo refresh
 
 ### Done
